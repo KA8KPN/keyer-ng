@@ -1,0 +1,9 @@
+Okay, I'm going to do a keyer from scratch.  The first thing to do is to
+take a contact closure and beep a speaker with it.  Then, I can implement
+iambic at a fixed speed.  Then, make improvements.
+
+Since measuring milliseconds is easy, I'll use a twitch (see the keyer notes)
+of 1 millisecond.  This corresponds to a standard word of "CODEX".  Anyway,
+at the beginning, I will do a contact closure.  The left leg connects to pin
+D5, the right leg connects to pin D2.  The speaker is connected to pin D4.
+
