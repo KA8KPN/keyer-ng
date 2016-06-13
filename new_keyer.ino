@@ -2,18 +2,21 @@
 
 #include <LiquidCrystal_I2C.h>
 
+#include "keying.h"
+
 #define LEFT_PADDLE 5
 #define RIGHT_PADDLE 2
 
-#define SIDETONE 4
-
 #define PTT_1    13
 #define KEY_OUT_1 11
-
 #define SIDETONE_FREQUENCY 800
 
 #define MIN_WPM 5L
 #define MAX_WPM 40L
+#define MS_PER_DOT 1200
+#define MS_PER_DASH (3*MS_PER_DOT)
+#define MS_PER_WORD (7*MS_PER_DOT)
+
 int potPin = A0;
 int potValue = 0;
 char buffer[100];
@@ -31,6 +34,8 @@ keyer_state_t next_keyer_state;
 
 LiquidCrystal_I2C display(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
+keying transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
+
 unsigned find_wpm() {
     unsigned wpm;
     // The WPM is MIN_WPM + (MAX_WPM - MIN_WPM) * 1024 / potValue;
@@ -43,7 +48,6 @@ unsigned find_wpm() {
 }
 
 void setup () {
-    unsigned wpm;
     pinMode(LEFT_PADDLE, INPUT);
     digitalWrite(LEFT_PADDLE, HIGH);
     pinMode(RIGHT_PADDLE, INPUT);
@@ -70,7 +74,7 @@ void loop() {
     if (now >= next_state_transition_ms) {
 	switch(keyer_state) {
 	case KEY_DIT:
-	    noTone(SIDETONE);
+	    transmitter.key_up();
 	    next_state_transition_ms = now + dot_twitches;
 	    keyer_state = KEY_UP;
 	    if (!digitalRead(RIGHT_PADDLE)) {
@@ -79,7 +83,7 @@ void loop() {
 	    break;
 
 	case KEY_DAH:
-	    noTone(SIDETONE);
+	    transmitter.key_up();
 	    next_state_transition_ms = now + dot_twitches;
 	    keyer_state = KEY_UP;
 	    if (!digitalRead(LEFT_PADDLE)) {
@@ -88,27 +92,28 @@ void loop() {
 	    break;
 
 	case KEY_UP:
+	    // I ought to be able to build this into a table and make it table driven
 	    switch(next_keyer_state) {
 	    case KEY_DIT:
 		next_state_transition_ms = now + dot_twitches;
-		tone(SIDETONE, SIDETONE_FREQUENCY);
+		transmitter.key_down();
 		break;
 
 	    case KEY_DAH:
 		next_state_transition_ms = now + dash_twitches;
-		tone(SIDETONE, SIDETONE_FREQUENCY);
+		transmitter.key_down();
 		break;
 
 	    default:
 		if (!digitalRead(LEFT_PADDLE)) {
 		    next_keyer_state = KEY_DIT;
 		    next_state_transition_ms = now + dot_twitches;
-		    tone(SIDETONE, SIDETONE_FREQUENCY);
+		    transmitter.key_down();
 		}
 		else if (!digitalRead(RIGHT_PADDLE)) {
 		    next_keyer_state = KEY_DAH;
 		    next_state_transition_ms = now + dash_twitches;
-		    tone(SIDETONE, SIDETONE_FREQUENCY);
+		    transmitter.key_down();
 		}
 		break;
 	    }
@@ -119,7 +124,7 @@ void loop() {
     }
 
     wpm = find_wpm();
-    dot_twitches = 1000/wpm;
-    dash_twitches = 3000/wpm;
-    word_twitches = 7000/wpm;
+    dot_twitches = MS_PER_DOT/wpm;
+    dash_twitches = MS_PER_DASH/wpm;
+    word_twitches = MS_PER_WORD/wpm;
 }	
