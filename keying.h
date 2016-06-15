@@ -15,12 +15,11 @@ public:
 private:
     void set_ptt(int ptt_line);
     void set_key_out(int key_out_line);
-    int m_ptt_line;
-    int m_key_out_line;
+    byte m_ptt_line;
+    byte m_key_out_line;
     int m_sidetone_freq;
-    void (*m_key_action)(int, bool);
-    void (*m_sidetone_action)(int, bool);
-    void (*m_ptt_action)(int, bool);
+    void (*m_key_action)(byte, byte);
+    void (*m_ptt_action)(byte, byte);
     
 };
 
