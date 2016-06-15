@@ -1,8 +1,7 @@
 #include <Arduino.h>
 
-#include <LiquidCrystal_I2C.h>
-
 #include "keying.h"
+#include "display.h"
 
 #define LEFT_PADDLE 5
 #define RIGHT_PADDLE 2
@@ -19,7 +18,6 @@
 
 int potPin = A0;
 int potValue = 0;
-char buffer[100];
 
 unsigned dot_twitches;
 unsigned dash_twitches;
@@ -32,18 +30,15 @@ typedef enum keyer_state { KEY_DIT, KEY_DAH, KEY_UP } keyer_state_t;
 keyer_state_t keyer_state;
 keyer_state_t next_keyer_state;
 
-LiquidCrystal_I2C display(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
-
 keying transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
+display display_manager;
 
 unsigned find_wpm() {
     unsigned wpm;
     // The WPM is MIN_WPM + (MAX_WPM - MIN_WPM) * 1024 / potValue;
     potValue = analogRead(potPin);
     wpm = MIN_WPM + ((MAX_WPM - MIN_WPM) * potValue + 512L) / 1024L;
-    display.home();
-    sprintf(buffer, "%2d", wpm);
-    display.write((const uint8_t*) buffer, strlen(buffer));
+    display_manager.wpm(wpm);
     return wpm;
 }
 
@@ -61,10 +56,12 @@ void setup () {
     keyer_state = KEY_UP;
     next_keyer_state = KEY_UP;
 
-    display.begin(20, 4, LCD_5x8DOTS);
-    display.on();
-    display.clear();
-    display.noCursor();
+    display_manager.init();
+    
+    display_manager.key_mode("IamA");
+    display_manager.input_source("PAD");
+    display_manager.paddle_orientation("Nor");
+    display_manager.xmit_mode("Tx1S");
 }
 
 void loop() {
