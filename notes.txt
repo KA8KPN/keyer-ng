@@ -7,3 +7,67 @@ of 1 millisecond.  This corresponds to a standard word of "CODEX".  Anyway,
 at the beginning, I will do a contact closure.  The left leg connects to pin
 D5, the right leg connects to pin D2.  The speaker is connected to pin D4.
 
+=======================================================================
+
+Progress, I can do an iambic-A keyer, and it sounds the sidetone.  It also
+should key the desired line (although I haven't tested that) and it reads a
+potentiometer for a speed control and displays that speed control on the LCD.
+
+Next, I need to do three things, in no particular order.  I need to design
+the display interface.  I need to split the paddle handling logic out of the
+main loop and into a set of classes (one per keying type, straight, bug,
+iambic-a, iambic-b, ultimatic, etc) and I need to add commands that I can use
+to alter the configuration of the keyer.
+
+To add commands, I need some way of entering commands, so I either need a
+serial port, a PS/2 keyboard, or the ability to interpret morse code as sent
+by the operator.  I also need to design the commands, so I'll put that off.
+
+Next, I think I want to design the display interface.  Most guys are using
+2-line display, each of 16 characters.  I'm using 4-lines, each of 20
+characters because I like lots of screen real-estate.  The problem is, I don't
+(yet-at any rate) know how to define an interface that works in both cases.
+
+I DO know that I don't want to just display the sent CW.  That's just about
+the most useless thing the K3NG software does.
+
+What information do I want to display?  Well, start with the speed.  Also,
+which TX is enabled, and whether or not the side tone is on.  How about
+whether or not the paddles are reversed.  Also, the mode the keyer is in,
+and maybe which memory is transmitting if a memory is transmitting.
+
+I don't think I want to know if the CW is being entered from the paddles, the
+keyboard, or a serial port, but I might add that if I don't choose something
+else.
+
+Okay, here's my display:
+           1         2
+  12345678901234567890
+ 1IamB 25 Tx1S Nor Pad
+ 2
+ 3
+ 4
+
+The other three lines could be like it works now.  The first field is "IamB"
+which means "Iambic-B".  The other values would be "IamA" (Iambic-A) " Bug"
+(semiautomatic), "Ulti" (Ultimatic) or "Strt" (Straight or "Cootie" Key).
+
+"25" would be the speed in WPM, and could take up to three digits.  "Tx1"
+would be which transmitter would be transmitting, which might be "Tx1",
+"Tx2",through however many or "CPO" for transmitter off.  The "S" would mean
+the sidetone is on.
+
+"Nor" would be normal paddle orientation, and "Rev" would be reverse.
+
+"Pad" would be currently transmitting from the paddles.  Other possible values
+would be "KBD" for keyboard, "Ser" for serial port, "Mnn" for memory number nn
+or "Rnn" for repeating memory number nn.
+
+Other values I might like to should would be the current serial number,  That
+might go on the second row.  Like I said, nothing is more useless than what's
+been transmitted.
+
+For a 2x16 display, notice I cunningly made the first four items 16 characters
+long, and I can envision scrolling the sent text along the bottom line.  I
+might just put text only on the bottom line in any case, figuring that I'll
+know what to do with the rest of the lines at some poitn.
