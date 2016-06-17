@@ -72,6 +72,20 @@ long, and I can envision scrolling the sent text along the bottom line.  I
 might just put text only on the bottom line in any case, figuring that I'll
 know what to do with the rest of the lines at some point.
 
-TODO:  Pass the display manager to the keying constructor (along with the
+--------------------------------------------------
+TODO:
+Split the keyer mode logic out of the main function.
+
+Pass the display manager to the keying constructor (along with the
 "transmitter number") so it can update the display when the transmit mode
 changes.
+
+PTT Logic, including keyer start delay after PTT asserted.
+
+Morse keyboard
+
+Scrolling text as it is sent
+
+DONE Morse through the serial port (although it could use some enhancement)
+
+Command modes through serial and keyboard
