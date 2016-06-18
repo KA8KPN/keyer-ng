@@ -47,6 +47,13 @@ typedef enum keyer_mode { MODE_PADDLE, MODE_KEYBOARD, MODE_SERIAL, MODE_MEMORY }
 keyer_mode_t keyer_mode;
 uint8_t kbd_bit, kbd_count;
 
+// The most significant four bits holds a count of the sounds made
+// The bottom 12 bits hold a bitmap of the length of the sounds, with the
+// least significant bit holding the first sound, the next least significant
+// bit holding the second sound, and so forth.  If the sound is long (a DAH)
+// then the corresponding bit is a one, otherwise the bit is a zero.
+// Eventually, the values, 0, 13, 14, and 15 for the most significant four
+// bits will mean different things.
 uint16_t morse_table[] = {
     0x2002, // A
     0x4001, // B
