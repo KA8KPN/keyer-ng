@@ -88,6 +88,9 @@ bigger.
 TODO:
 Split the keyer mode logic out of the main function.
 
+If I don't send anything for a while, and the last character is not a space,
+then the last character should be a space.
+
 Pass the display manager to the keying constructor (along with the
 "transmitter number") so it can update the display when the transmit mode
 changes.
