@@ -72,6 +72,18 @@ long, and I can envision scrolling the sent text along the bottom line.  I
 might just put text only on the bottom line in any case, figuring that I'll
 know what to do with the rest of the lines at some point.
 
+I think that having three scrolling lines is kind of excessive.  I mean, I can
+see having scrolling text so that the user can see what's going on, but I
+can't see having more than one line scroll.  So, I'm going to make the fields
+bigger.
+
+           1         2
+  12345678901234567890
+ 1Iambic Mode A  25wpm 
+ 2Xmitter 1  Tone  800
+ 3Paddles Reverse
+ 4
+
 --------------------------------------------------
 TODO:
 Split the keyer mode logic out of the main function.

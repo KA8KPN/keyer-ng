@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#include "options.h"
+
 #include "keying.h"
 #include "display.h"
 
@@ -9,6 +11,24 @@
 #define PTT_1    13
 #define KEY_OUT_1 11
 #define SIDETONE_FREQUENCY 800
+
+#if defined(DISPLAY_LARGE)
+String xmit_strings[] = {
+    "Xmitter 1",
+    "Xmitter 2",
+    "Xmitter 3",
+    "Xmitter 4",
+    "Practice "
+};
+#else // !defined(DISPLAY_LARGE)
+String key_modestrings[] = {
+    "Tx1",
+    "Tx2",
+    "Tx3",
+    "Tx4",
+    "CPO"
+};
+#endif // !defined(DISPLAY_LARGE)
 
 #define MIN_WPM 5L
 #define MAX_WPM 40L
@@ -24,6 +44,24 @@ unsigned dash_twitches;
 unsigned word_twitches;
 unsigned long last_ms;
 unsigned long next_state_transition_ms;
+
+#if defined(DISPLAY_LARGE)
+String key_modestrings[] = {
+    "Iambic Mode A",
+    "Iambic Mode B",
+    "Ultimatic"
+    "Semiautomatic",
+    "Straight"
+};
+#else // !defined(DISPLAY_LARGE)
+String key_modestrings[] = {
+"IamA",
+    "IamB",
+    "Ulti"
+    "Bug ",
+    "Strt"
+    };
+#endif // !defined(DISPLAY_LARGE)
 
 typedef enum keyer_state { KEY_DIT, KEY_DAH, KEY_UP } keyer_state_t;
 
@@ -42,10 +80,28 @@ unsigned find_wpm() {
     return wpm;
 }
 
-typedef enum keyer_mode { MODE_PADDLE, MODE_KEYBOARD, MODE_SERIAL, MODE_MEMORY } keyer_mode_t;
+typedef enum keyer_mode { MODE_PADDLE_NORMAL, MODE_PADDLE_REVERSE, MODE_KEYBOARD, MODE_SERIAL, MODE_MEMORY } keyer_mode_t;
 
 keyer_mode_t keyer_mode;
 uint8_t kbd_bit, kbd_count;
+
+#if defined(DISPLAY_LARGE)
+String input_strings[] = {
+    "Paddles Normal",
+    "Paddles Reverse",
+    "Keyboard",
+    "Serial Port",
+    "Memory"
+};
+#else // !defined(DISPLAY_LARGE)
+String input_strings[] = {
+    "Nor",
+    "Rev",
+    "Kbd",
+    "Srl",
+    "Mem"
+};
+#endif // !defined(DISPLAY_LARGE)
 
 // The most significant four bits holds a count of the sounds made
 // The bottom 12 bits hold a bitmap of the length of the sounds, with the
@@ -95,7 +151,7 @@ uint16_t morse_table[] = {
 
 
 void setup () {
-    keyer_mode = MODE_PADDLE;
+    keyer_mode = MODE_PADDLE_NORMAL;
 
     pinMode(LEFT_PADDLE, INPUT);
     digitalWrite(LEFT_PADDLE, HIGH);
@@ -112,9 +168,10 @@ void setup () {
 
     display_manager.init();
     
-    display_manager.key_mode("IamA");
-    display_manager.paddle_orientation("Nor");
-    display_manager.xmit_mode("Tx1S");
+    display_manager.key_mode(key_modestrings[0]);
+    display_manager.sidetone(SIDETONE_FREQUENCY);
+    display_manager.input_source(input_strings[keyer_mode]);
+    display_manager.xmit_mode(xmit_strings[0]);
 
     // Without the serial support, the firmware takes 11316 bytes
     // Initial support, 12054 bytes
@@ -130,8 +187,8 @@ void loop() {
     unsigned wpm;
 
     if (now >= next_state_transition_ms) {
-	if (MODE_PADDLE == keyer_mode) {
-	    display_manager.input_source("Pdl");
+	if (MODE_PADDLE_NORMAL == keyer_mode) {
+	    display_manager.input_source(input_strings[keyer_mode]);
 	    switch(keyer_state) {
 	    case KEY_DIT:
 		transmitter.key_up();
@@ -204,7 +261,7 @@ void loop() {
 		}
 		else {
 		    next_state_transition_ms = now + dash_twitches;
-		    keyer_mode = MODE_PADDLE;
+		    keyer_mode = MODE_PADDLE_NORMAL;
 		}
 	    }
 	    
@@ -222,16 +279,19 @@ void loop() {
 		keyer_state = KEY_DAH;
 		kbd_count = 1;
 		next_state_transition_ms = now + dash_twitches + dot_twitches;
+                display_manager.scrolling_text(' ');
 	    }
 	    if (isalpha(c)) {
 		z = morse_table[toupper(c) - 'A'];
+                display_manager.scrolling_text(c);
 	    }
 	    if (isdigit(c)) {
 		z = morse_table[26 + c - '0'];
+                display_manager.scrolling_text(c);
 	    }
 	    if (z) {
 		keyer_mode = MODE_SERIAL;
-		display_manager.input_source("Srl");
+	        display_manager.input_source(input_strings[keyer_mode]);
 		kbd_count = z >> 12;
 		kbd_bit = z & 0x0fff;
 	    }
