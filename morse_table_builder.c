@@ -132,19 +132,33 @@ void build_morse_decode_table() {
 	    morse_decode_table[current_element].c = inputs[i].c;
 	}
     }
+    puts("\n\n\n// The morse_decode_table is an array of elements formed into a binary tree.  Each");
+    puts("// of the elements consists of a printable character, which is what it prints if it is at");
+    puts("// the end of a character with the pointer in that state, and an array of two elements ");
+    puts("// if the next sound is a dit, it chooses the index held at offset zero in the two element");
+    puts("// array to be the index of the next decode element, otherwise it chooses the index at");
+    puts("// offset one.  It traverses the tree until the end of the character and then prints out the");
+    puts("// character at the index of the current node.");
     puts("typedef struct {int c;int links[2];}morse_decode_t;");
+    puts("#ifdef DEFINE_MORSE_TABLES");
     puts("morse_decode_t morse_decode_table[] = {");
     for (i=0; i<(last_element-1); ++i) {
 	printf("{%d, {%d, %d}},\n", morse_decode_table[i].c, morse_decode_table[i].links[0], morse_decode_table[i].links[1]);
     }
     printf("{%d, {%d, %d}}\n", morse_decode_table[last_element-1].c, morse_decode_table[last_element-1].links[0], morse_decode_table[last_element-1].links[1]);
     puts("};");
+    puts("#else //! DEFINE_MORSE_TABLES");
+    puts("extern morse_decode_t morse_decode_table[];");
+    puts("#endif //! DEFINE_MORSE_TABLES");
 }
 
 
 int main(int argc, char **argv) {
     (void) argc;
     (void) argv;
+
+    puts("#ifndef MORSE_TABLE_H_INCLUDED");
+    puts("#define MORSE_TABLE_H_INCLUDED");
 
     uint16_t outputs[256];
     int i;
@@ -180,16 +194,46 @@ int main(int argc, char **argv) {
 	}
     }
 
+    puts("// The most significant four bits holds a count of the sounds made");
+    puts("// The bottom 12 bits hold a bitmap of the length of the sounds, with the");
+    puts("// least significant bit holding the first sound, the next least significant");
+    puts("// bit holding the second sound, and so forth.  If the sound is long (a DAH)");
+    puts("// then the corresponding bit is a one, otherwise the bit is a zero.");
+    puts("// Eventually, the values, 0, 13, 14, and 15 for the most significant four");
+    puts("// bits will mean different things.");
+    puts("#ifdef DEFINE_MORSE_TABLES");
     puts("uint16_t morse_table[] = {");
     for (i=0; i<31; ++i) {
+	printf(" // %03o '%c' %03o '%c' %03o '%c' %03o '%c' %03o '%c' %03o '%c' %03o '%c' %03o '%c'\n",
+	       8*i, isprint(8*i) ? 8*i : '.',
+	       8*i+1, isprint(8*i+1) ? 8*i+1 : '.',
+	       8*i+2, isprint(8*i+2) ? 8*i+2 : '.',
+	       8*i+3, isprint(8*i+3) ? 8*i+3 : '.',
+	       8*i+4, isprint(8*i+4) ? 8*i+4 : '.',
+	       8*i+5, isprint(8*i+5) ? 8*i+5 : '.',
+	       8*i+6, isprint(8*i+6) ? 8*i+6 : '.',
+	       8*i+7, isprint(8*i+7) ? 8*i+7 : '.');
 	printf("    0x%04x, 0x%04x, 0x%04x, 0x%04x, 0x%04x, 0x%04x, 0x%04x, 0x%04x,\n", outputs[8*i], outputs[8*i+1], outputs[8*i+2], outputs[8*i+3], outputs[8*i+4], outputs[8*i+5], outputs[8*i+6], outputs[8*i+7]);
     }
+    printf(" // 370 '%c' 371 '%c' 372 '%c' 373 '%c' 374 '%c' 375 '%c' 376 '%c' 377 '%c'\n",
+	   isprint(248) ? 248 : '.',
+	   isprint(249) ? 249 : '.',
+	   isprint(250) ? 250 : '.',
+	   isprint(251) ? 251 : '.',
+	   isprint(252) ? 252 : '.',
+	   isprint(253) ? 253 : '.',
+	   isprint(254) ? 254 : '.',
+	   isprint(255) ? 255 : '.');
     printf("    0x%04x, 0x%04x, 0x%04x, 0x%04x, 0x%04x, 0x%04x, 0x%04x, 0x%04x\n", outputs[248], outputs[249], outputs[250], outputs[251], outputs[252], outputs[253], outputs[254], outputs[255]);
     puts("};");
+    puts("#else //! DEFINE_MORSE_TABLES");
+    puts("extern uint16_t morse_table[];");
+    puts("#endif //! DEFINE_MORSE_TABLES");
 
 
     build_morse_decode_table();
 
+    puts("#endif // MORSE_TABLE_H_INCLUDED");
     return EXIT_SUCCESS;
 }
 
