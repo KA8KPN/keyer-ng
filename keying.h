@@ -3,6 +3,8 @@
 
 #define SIDETONE 4
 
+typedef enum keyer_state { KEY_DIT, KEY_DAH, KEY_UP } keyer_state_t;
+
 class keying {
 public:
     keying(int ptt_line, int key_out_line, int sidetone_freq);

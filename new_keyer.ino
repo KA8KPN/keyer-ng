@@ -4,13 +4,10 @@
 
 #include "keying.h"
 #include "display.h"
+#include "wpm.h"
+#include "paddles.h"
 
-#define LEFT_PADDLE 5
-#define RIGHT_PADDLE 2
-
-#define PTT_1    13
-#define KEY_OUT_1 11
-#define SIDETONE_FREQUENCY 800
+#include "keyer.h"
 
 #if defined(DISPLAY_LARGE)
 String xmit_strings[] = {
@@ -30,18 +27,6 @@ String key_modestrings[] = {
 };
 #endif // !defined(DISPLAY_LARGE)
 
-#define MIN_WPM 5L
-#define MAX_WPM 40L
-#define MS_PER_DOT 1200
-#define MS_PER_DASH (3*MS_PER_DOT)
-#define MS_PER_WORD (7*MS_PER_DOT)
-
-int potPin = A0;
-int potValue = 0;
-
-unsigned dot_twitches;
-unsigned dash_twitches;
-unsigned word_twitches;
 unsigned long last_ms;
 unsigned long next_state_transition_ms;
 
@@ -63,28 +48,6 @@ String key_modestrings[] = {
     };
 #endif // !defined(DISPLAY_LARGE)
 
-typedef enum keyer_state { KEY_DIT, KEY_DAH, KEY_UP } keyer_state_t;
-
-keyer_state_t keyer_state;
-keyer_state_t next_keyer_state;
-
-keying transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
-display display_manager;
-
-unsigned find_wpm() {
-    unsigned wpm;
-    // The WPM is MIN_WPM + (MAX_WPM - MIN_WPM) * 1024 / potValue;
-    potValue = analogRead(potPin);
-    wpm = MIN_WPM + ((MAX_WPM - MIN_WPM) * potValue + 512L) / 1024L;
-    display_manager.wpm(wpm);
-    return wpm;
-}
-
-typedef enum keyer_mode { MODE_PADDLE_NORMAL, MODE_PADDLE_REVERSE, MODE_KEYBOARD, MODE_SERIAL, MODE_MEMORY } keyer_mode_t;
-
-keyer_mode_t keyer_mode;
-uint8_t kbd_bit, kbd_count;
-
 #if defined(DISPLAY_LARGE)
 String input_strings[] = {
     "Paddles Normal",
@@ -103,8 +66,18 @@ String input_strings[] = {
 };
 #endif // !defined(DISPLAY_LARGE)
 
+keying transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
+display display_manager;
+wpm wpm(A0, &display_manager);
+paddles paddles(&transmitter, &display_manager, &wpm);
+
+keyer_mode_t keyer_mode;
+uint8_t kbd_bit, kbd_count;
+
 #define DEFINE_MORSE_TABLES
 #include "morse_tables.h"
+
+keyer_state_t kbd_keyer_state;
 
 void setup () {
     keyer_mode = MODE_PADDLE_NORMAL;
@@ -119,8 +92,6 @@ void setup () {
 
     last_ms = 100 + millis();
     next_state_transition_ms = last_ms;
-    keyer_state = KEY_UP;
-    next_keyer_state = KEY_UP;
 
     display_manager.init();
     
@@ -136,91 +107,39 @@ void setup () {
     Serial.begin(115200);
     while (!Serial) {
     }
+    kbd_keyer_state = KEY_UP;
 }
 
 void loop() {
     unsigned long now = millis();
-    unsigned wpm;
 
+    keyer_mode = paddles.update(now, keyer_mode);
     if (now >= next_state_transition_ms) {
-	if (MODE_PADDLE_NORMAL == keyer_mode) {
-	    display_manager.input_source(input_strings[keyer_mode]);
-	    switch(keyer_state) {
-	    case KEY_DIT:
-		transmitter.key_up();
-		next_state_transition_ms = now + dot_twitches;
-		keyer_state = KEY_UP;
-		if (!digitalRead(RIGHT_PADDLE)) {
-		    next_keyer_state = KEY_DAH;
-		}
-		break;
-
-	    case KEY_DAH:
-		transmitter.key_up();
-		next_state_transition_ms = now + dot_twitches;
-		keyer_state = KEY_UP;
-		if (!digitalRead(LEFT_PADDLE)) {
-		    next_keyer_state = KEY_DIT;
-		}
-		break;
-
-	    case KEY_UP:
-		// I ought to be able to build this into a table and make it table driven
-		switch(next_keyer_state) {
-		case KEY_DIT:
-		    next_state_transition_ms = now + dot_twitches;
-		    transmitter.key_down();
-		    break;
-
-		case KEY_DAH:
-		    next_state_transition_ms = now + dash_twitches;
-		    transmitter.key_down();
-		    break;
-
-		default:
-		    if (!digitalRead(LEFT_PADDLE)) {
-			next_keyer_state = KEY_DIT;
-			next_state_transition_ms = now + dot_twitches;
-			transmitter.key_down();
-		    }
-		    else if (!digitalRead(RIGHT_PADDLE)) {
-			next_keyer_state = KEY_DAH;
-			next_state_transition_ms = now + dash_twitches;
-			transmitter.key_down();
-		    }
-		    break;
-		}
-		keyer_state = next_keyer_state;
-		next_keyer_state = KEY_UP;
-		break;
-	    }
-	}
-	else {
-	    if (KEY_UP == keyer_state) {
+	if (MODE_SERIAL == keyer_mode) {
+	    if (KEY_UP == kbd_keyer_state) {
 		transmitter.key_down();
 		if (1 & kbd_bit) {
-		    keyer_state = KEY_DAH;
-		    next_state_transition_ms = now + dash_twitches;
+		    kbd_keyer_state = KEY_DAH;
+		    next_state_transition_ms = now + wpm.dash_twitches();
 		}
 		else {
-		    keyer_state = KEY_DIT;
-		    next_state_transition_ms = now + dot_twitches;
+		    kbd_keyer_state = KEY_DIT;
+		    next_state_transition_ms = now + wpm.dot_twitches();
 		}
 	    }
 	    else {
 		transmitter.key_up();
-		keyer_state = KEY_UP;
+		kbd_keyer_state = KEY_UP;
 		--kbd_count;
 		if (kbd_count > 0) {
 		    kbd_bit >>= 1;
-		    next_state_transition_ms = now + dot_twitches;
+		    next_state_transition_ms = now + wpm.dot_twitches();
 		}
 		else {
-		    next_state_transition_ms = now + dash_twitches;
+		    next_state_transition_ms = now + wpm.dash_twitches();
 		    keyer_mode = MODE_PADDLE_NORMAL;
 		}
 	    }
-	    
 	}
     }
     if (MODE_SERIAL != keyer_mode) {
@@ -233,9 +152,10 @@ void loop() {
 	    if (z) {
 		if (0xd000 == z) {
 		    keyer_mode = MODE_SERIAL;
-		    keyer_state = KEY_DAH;
+		    display_manager.input_source(input_strings[keyer_mode]);
+		    kbd_keyer_state = KEY_DAH;
 		    kbd_count = 1;
-		    next_state_transition_ms = now + dash_twitches + dot_twitches;
+		    next_state_transition_ms = now + wpm.dash_twitches() + wpm.dot_twitches();
 		    display_manager.scrolling_text(' ');
 		}
 		else if (0xd000 > z) {
@@ -254,8 +174,5 @@ void loop() {
 	    }
 	}
     }
-    wpm = find_wpm();
-    dot_twitches = MS_PER_DOT/wpm;
-    dash_twitches = MS_PER_DASH/wpm;
-    word_twitches = MS_PER_WORD/wpm;
+    wpm.update();
 }	
