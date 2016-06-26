@@ -6,6 +6,7 @@
 #include "display.h"
 #include "wpm.h"
 #include "paddles.h"
+#include "serial.h"
 
 #include "keyer.h"
 
@@ -27,15 +28,12 @@ String key_modestrings[] = {
 };
 #endif // !defined(DISPLAY_LARGE)
 
-unsigned long last_ms;
-unsigned long next_state_transition_ms;
-
 #if defined(DISPLAY_LARGE)
 String key_modestrings[] = {
-    "Iambic Mode A",
-    "Iambic Mode B",
-    "Ultimatic"
-    "Semiautomatic",
+    "Iambic-A",
+    "Iambic-B",
+    "Ultimatc"
+    "Semiauto",
     "Straight"
 };
 #else // !defined(DISPLAY_LARGE)
@@ -50,11 +48,11 @@ String key_modestrings[] = {
 
 #if defined(DISPLAY_LARGE)
 String input_strings[] = {
-    "Paddles Normal",
-    "Paddles Reverse",
-    "Keyboard",
+    "Norm Paddle",
+    "Rev Paddle ",
+    "Keyboard   ",
     "Serial Port",
-    "Memory"
+    "Memory ##  "
 };
 #else // !defined(DISPLAY_LARGE)
 String input_strings[] = {
@@ -70,15 +68,12 @@ keying transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
 display display_manager;
 wpm wpm(A0, &display_manager);
 paddles paddles(&transmitter, &display_manager, &wpm, RIGHT_PADDLE, LEFT_PADDLE);
+serial serial(&transmitter, &display_manager, &wpm, true);
 
 keyer_mode_t keyer_mode;
-uint8_t kbd_bit, kbd_count;
-bool echo_serial;
 
 #define DEFINE_MORSE_TABLES
 #include "morse_tables.h"
-
-keyer_state_t kbd_keyer_state;
 
 void setup () {
     keyer_mode = MODE_PADDLE_NORMAL;
@@ -90,9 +85,6 @@ void setup () {
 
     pinMode(SIDETONE, OUTPUT);
     digitalWrite(SIDETONE, LOW);
-
-    last_ms = 100 + millis();
-    next_state_transition_ms = last_ms;
 
     display_manager.init();
     
@@ -108,76 +100,12 @@ void setup () {
     Serial.begin(115200);
     while (!Serial) {
     }
-    kbd_keyer_state = KEY_UP;
-    echo_serial = true;
 }
 
 void loop() {
     unsigned long now = millis();
 
     keyer_mode = paddles.update(now, keyer_mode);
-    if (now >= next_state_transition_ms) {
-	if (MODE_SERIAL == keyer_mode) {
-	    if (KEY_UP == kbd_keyer_state) {
-		transmitter.key_down();
-		if (1 & kbd_bit) {
-		    kbd_keyer_state = KEY_DAH;
-		    next_state_transition_ms = now + wpm.dash_twitches();
-		}
-		else {
-		    kbd_keyer_state = KEY_DIT;
-		    next_state_transition_ms = now + wpm.dot_twitches();
-		}
-	    }
-	    else {
-		transmitter.key_up();
-		kbd_keyer_state = KEY_UP;
-		--kbd_count;
-		if (kbd_count > 0) {
-		    kbd_bit >>= 1;
-		    next_state_transition_ms = now + wpm.dot_twitches();
-		}
-		else {
-		    next_state_transition_ms = now + wpm.dash_twitches();
-		    keyer_mode = MODE_PADDLE_NORMAL;
-		}
-	    }
-	}
-    }
-    if (MODE_SERIAL != keyer_mode) {
-	if (Serial.available()) {
-	    char c;
-	    uint16_t z;
-
-	    Serial.readBytes(&c, 1);
-	    if (echo_serial) {
-		Serial.write(c);
-	    }
-	    z = morse_table[c];
-	    if (z) {
-		if (0xd000 == z) {
-		    keyer_mode = MODE_SERIAL;
-		    display_manager.input_source(input_strings[keyer_mode]);
-		    kbd_keyer_state = KEY_DAH;
-		    kbd_count = 1;
-		    next_state_transition_ms = now + wpm.dash_twitches() + wpm.dot_twitches();
-		    display_manager.scrolling_text(' ');
-		}
-		else if (0xd000 > z) {
-		    keyer_mode = MODE_SERIAL;
-		    display_manager.input_source(input_strings[keyer_mode]);
-		    kbd_count = z >> 12;
-		    kbd_bit = z & 0x0fff;
-		    display_manager.scrolling_text(c);
-		}
-		else {
-		    keyer_mode = MODE_PADDLE_NORMAL;
-		}
-	    }
-	    else {
-		keyer_mode = MODE_PADDLE_NORMAL;
-	    }
-	}
-    }
+    keyer_mode = serial.update(now, keyer_mode);
     wpm.update();
 }	

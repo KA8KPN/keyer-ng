@@ -79,20 +79,58 @@ bigger.
 
            1         2
   12345678901234567890
- 1Iambic Mode A  25wpm 
+ 1Iambic Mode A  25wpm
  2Xmitter 1  Tone  800
  3Paddles Reverse
  4
+
+I thought about it, and I think I want to visually display whether or not the
+system is in "program" mode.  So, how about this:
+
+           1         2
+  12345678901234567890
+ 1Iambic-A Prog  25wpm
+ 2Xmitter 1  Tone  800
+ 3Paddles Reverse
+ 4
+
+in program mode and
+
+           1         2
+  12345678901234567890
+ 1Iambic-A       25wpm
+ 2Xmitter 1  Tone  800
+ 3Paddles Reverse
+ 4
+
+When not in program mode.
+
+I also want to show the serial number, when that feature is included.  I think
+I can put that on the 3rd row.  So, how about this?
+
+           1         2
+  12345678901234567890
+ 1Iambic-A       25wpm
+ 2Xmitter 1  Tone  800
+ 3Norm Paddle    #####
+ 4
+
 
 --------------------------------------------------
 TODO:
 DONE)  Split the paddle logic out of the main function.
 
-Split the serial port handling out of the main function.
+DONE)  Split the serial port handling out of the main function.
+
+Split the text to morse functionality out of the serial port handling.
 
 add PS/2 Morse keyboard
 
-Configuration changes through serial and keyboard.  The first change will be reverse and sidetone toggle
+Configuration changes through serial and keyboard.  The first change will be reverse paddles and sidetone toggle
+
+Figure out how to do the display strings better.  Maybe with defined constants that only the display class knows how to interpret.
+
+Set up a mechanism for including or eliminating specified features and options similar to the way K3NG's firmware set does.  This is a big invasive change, so I want to do this soon before things get too far advanced.
 
 Read the buttons
 
@@ -114,4 +152,3 @@ DONE) Morse through the serial port (although it could use some enhancement)
 I'm having trouble sending KN, figure out why and fix it.
 
 Allow for the programming and playing back of memories.
-
