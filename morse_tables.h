@@ -87,7 +87,7 @@ extern uint16_t morse_table[];
 // array to be the index of the next decode element, otherwise it chooses the index at
 // offset one.  It traverses the tree until the end of the character and then prints out the
 // character at the index of the current node.
-typedef struct {int c;int links[2];}morse_decode_t;
+typedef struct {uint8_t c;uint8_t links[2];}morse_decode_t;
 #ifdef DEFINE_MORSE_TABLES
 morse_decode_t morse_decode_table[] = {
 {0, {1, 3}},

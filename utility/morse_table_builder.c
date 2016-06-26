@@ -139,7 +139,7 @@ void build_morse_decode_table() {
     puts("// array to be the index of the next decode element, otherwise it chooses the index at");
     puts("// offset one.  It traverses the tree until the end of the character and then prints out the");
     puts("// character at the index of the current node.");
-    puts("typedef struct {int c;int links[2];}morse_decode_t;");
+    puts("typedef struct {uint8_t c;uint8_t links[2];}morse_decode_t;");
     puts("#ifdef DEFINE_MORSE_TABLES");
     puts("morse_decode_t morse_decode_table[] = {");
     for (i=0; i<(last_element-1); ++i) {
