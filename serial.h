@@ -5,20 +5,17 @@
 #include "keying.h"
 #include "display.h"
 #include "wpm.h"
+#include "morse_to_text.h"
 
 class serial {
 public:
-    serial(keying *transmitter, display *display_manager, const wpm *wpm, bool echo);
-    keyer_mode_t update(unsigned long now, keyer_mode_t mode);
+    serial(display *display_manager, morse_to_text *mtt, bool echo);
+    void update(void);
 
 private:
-    keying *m_transmitter;
     display *m_displayManager;
-    const wpm *m_wpm;
+    morse_to_text *m_mtt;
     bool m_echoChars;
-    unsigned long m_nextStateTransitionMs;
-    keyer_state_t m_keyerState;
-    uint8_t m_kbdBit, m_kbdCount;
 };
 
 #endif // SERIAL_H_INCLUDED

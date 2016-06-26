@@ -7,6 +7,7 @@
 #include "wpm.h"
 #include "paddles.h"
 #include "serial.h"
+#include "morse_to_text.h"
 
 #include "keyer.h"
 
@@ -68,7 +69,8 @@ keying transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
 display display_manager;
 wpm wpm(A0, &display_manager);
 paddles paddles(&transmitter, &display_manager, &wpm, RIGHT_PADDLE, LEFT_PADDLE);
-serial serial(&transmitter, &display_manager, &wpm, true);
+morse_to_text mtt(&transmitter, &display_manager, &wpm);
+serial serial(&display_manager, &mtt, true);
 
 keyer_mode_t keyer_mode;
 
@@ -106,6 +108,7 @@ void loop() {
     unsigned long now = millis();
 
     keyer_mode = paddles.update(now, keyer_mode);
-    keyer_mode = serial.update(now, keyer_mode);
+    serial.update();
+    keyer_mode = mtt.update(now, keyer_mode);
     wpm.update();
 }	
