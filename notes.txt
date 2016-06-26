@@ -86,10 +86,20 @@ bigger.
 
 --------------------------------------------------
 TODO:
-Split the keyer mode logic out of the main function.
+DONE)  Split the paddle logic out of the main function.
+
+Split the serial port handling out of the main function.
+
+add PS/2 Morse keyboard
+
+Configuration changes through serial and keyboard.  The first change will be reverse and sidetone toggle
+
+Read the buttons
+
+Configuration changes through the paddles with a command button.  The first change will be reverse and sidetone toggle
 
 If I don't send anything for a while, and the last character is not a space,
-then the last character should be a space.
+then the last character on the scrolling display should be a space.
 
 Pass the display manager to the keying constructor (along with the
 "transmitter number") so it can update the display when the transmit mode
@@ -97,10 +107,11 @@ changes.
 
 PTT Logic, including keyer start delay after PTT asserted.
 
-Morse keyboard
+DONE) Scrolling text as it is sent (although it could use some enhancement)
 
-Scrolling text as it is sent
+DONE) Morse through the serial port (although it could use some enhancement)
 
-DONE Morse through the serial port (although it could use some enhancement)
+I'm having trouble sending KN, figure out why and fix it.
 
-Command modes through serial and keyboard
+Allow for the programming and playing back of memories.
+

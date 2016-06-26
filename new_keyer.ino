@@ -69,10 +69,11 @@ String input_strings[] = {
 keying transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
 display display_manager;
 wpm wpm(A0, &display_manager);
-paddles paddles(&transmitter, &display_manager, &wpm);
+paddles paddles(&transmitter, &display_manager, &wpm, RIGHT_PADDLE, LEFT_PADDLE);
 
 keyer_mode_t keyer_mode;
 uint8_t kbd_bit, kbd_count;
+bool echo_serial;
 
 #define DEFINE_MORSE_TABLES
 #include "morse_tables.h"
@@ -108,6 +109,7 @@ void setup () {
     while (!Serial) {
     }
     kbd_keyer_state = KEY_UP;
+    echo_serial = true;
 }
 
 void loop() {
@@ -148,6 +150,9 @@ void loop() {
 	    uint16_t z;
 
 	    Serial.readBytes(&c, 1);
+	    if (echo_serial) {
+		Serial.write(c);
+	    }
 	    z = morse_table[c];
 	    if (z) {
 		if (0xd000 == z) {
