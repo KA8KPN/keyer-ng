@@ -2,6 +2,14 @@
 
 #include "serial.h"
 
+void serial_setup(void) {
+    delay(1000);
+    Serial.begin(115200);
+    while (!Serial) {
+    }
+}
+
+
 serial::serial(display *display_manager, morse_to_text *mtt, bool echo) : m_displayManager(display_manager), m_mtt(mtt), m_echoChars(echo) {
 }
 

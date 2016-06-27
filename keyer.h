@@ -18,6 +18,9 @@ typedef enum keyer_mode { MODE_PADDLE_NORMAL, MODE_PADDLE_REVERSE, MODE_KEYBOARD
 #define KEY_OUT_1 11
 #define SIDETONE_FREQUENCY 800
 
+#define KBD_DATA A3
+#define KBD_IRQ 3
+
 extern String input_strings[];
 
 #endif // KEYER_H_INCLUDED

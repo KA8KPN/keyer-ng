@@ -3,7 +3,7 @@
 #include "paddles.h"
 #include "morse_tables.h"
 
-paddles::paddles(keying *transmitter, display *display_manager, const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_transmitter(transmitter), m_displayManager(display_manager), m_wpm(wpm), m_rightPaddle(right_paddle), m_leftPaddle(left_paddle) {
+paddles::paddles(keying *transmitter, display *display_manager, const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_transmitter(transmitter), m_displayManager(display_manager), m_wpm(wpm), m_leftPaddle(left_paddle), m_rightPaddle(right_paddle) {
     m_nextStateTransitionMs = 100 + millis();
     m_keyerState = KEY_UP;
     m_lastKeyerState = KEY_UP;

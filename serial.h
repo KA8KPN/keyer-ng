@@ -7,6 +7,8 @@
 #include "wpm.h"
 #include "morse_to_text.h"
 
+void serial_setup(void);
+
 class serial {
 public:
     serial(display *display_manager, morse_to_text *mtt, bool echo);

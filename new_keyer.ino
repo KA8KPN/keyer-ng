@@ -7,6 +7,7 @@
 #include "wpm.h"
 #include "paddles.h"
 #include "serial.h"
+#include "ps2_keyboard.h"
 #include "morse_to_text.h"
 
 #include "keyer.h"
@@ -71,6 +72,7 @@ wpm wpm(A0, &display_manager);
 paddles paddles(&transmitter, &display_manager, &wpm, RIGHT_PADDLE, LEFT_PADDLE);
 morse_to_text mtt(&transmitter, &display_manager, &wpm);
 serial serial(&display_manager, &mtt, true);
+ps2_keyboard keyboard(&display_manager, &mtt);
 
 keyer_mode_t keyer_mode;
 
@@ -99,9 +101,8 @@ void setup () {
     // Initial support, 12054 bytes
     // With space 12096
     // with working space 12164
-    Serial.begin(115200);
-    while (!Serial) {
-    }
+    serial_setup();
+    ps2_keyboard_setup();
 }
 
 void loop() {
@@ -109,6 +110,7 @@ void loop() {
 
     keyer_mode = paddles.update(now, keyer_mode);
     serial.update();
+    keyboard.update();
     keyer_mode = mtt.update(now, keyer_mode);
     wpm.update();
 }	
