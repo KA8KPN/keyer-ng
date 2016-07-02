@@ -3,12 +3,13 @@
 #include "paddles.h"
 #include "display.h"
 #include "morse_tables.h"
+#include "wpm.h"
 
 paddles *system_paddles = NULL;
 
-void paddles_initialize(const wpm *wpm, byte right_paddle, byte left_paddle)
+void paddles_initialize(byte right_paddle, byte left_paddle)
 {
-    system_paddles = new paddles(wpm, right_paddle, left_paddle);
+    system_paddles = new paddles(right_paddle, left_paddle);
 
     pinMode(left_paddle, INPUT);
     digitalWrite(left_paddle, HIGH);
@@ -17,7 +18,7 @@ void paddles_initialize(const wpm *wpm, byte right_paddle, byte left_paddle)
     DISPLAY_MANAGER_KEY_MODE(KEYER_IAMBIC_A);
 }
 
-paddles::paddles(const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_wpm(wpm), m_leftPaddle(left_paddle), m_rightPaddle(right_paddle), m_paddleMode(MODE_PADDLE_NORMAL) {
+paddles::paddles(uint8_t right_paddle, uint8_t left_paddle) : m_leftPaddle(left_paddle), m_rightPaddle(right_paddle), m_paddleMode(MODE_PADDLE_NORMAL) {
     m_nextStateTransitionMs = 100 + millis();
     m_startReadingPaddlesMs = 0;
     m_keyerState = KEY_UP;
@@ -84,9 +85,9 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		// TODO:  If it ever returns to the start state, it should indicate that there was a symbol
 		// TODO:  it did not decode.
 		m_morseTableState = morse_decode_table[m_morseTableState].links[0];
-		m_nextStateTransitionMs = now + m_wpm->dot_twitches();
+		m_nextStateTransitionMs = now + WPM_DOT_TWITCHES();
 		TRANSMITTER_KEY_DOWN();
-		m_startReadingPaddlesMs = now + m_wpm->dot_twitches();
+		m_startReadingPaddlesMs = now + WPM_DOT_TWITCHES();
 		m_ditClosed = false;
 		m_dahClosed = false;
 		break;
@@ -95,9 +96,9 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		// TODO:  If it ever returns to the start state, it should indicate that there was a symbol
 		// TODO:  it did not decode.
 		m_morseTableState = morse_decode_table[m_morseTableState].links[1];
-		m_nextStateTransitionMs = now + m_wpm->dash_twitches();
+		m_nextStateTransitionMs = now + WPM_DASH_TWITCHES();
 		TRANSMITTER_KEY_DOWN();
-		m_startReadingPaddlesMs = now + m_wpm->dash_twitches();
+		m_startReadingPaddlesMs = now + WPM_DASH_TWITCHES();
 		m_ditClosed = false;
 		m_dahClosed = false;
 		break;
@@ -111,7 +112,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		}
 		else {
 		    TRANSMITTER_KEY_UP();
-		    m_nextStateTransitionMs = now + m_wpm->dot_twitches();
+		    m_nextStateTransitionMs = now + WPM_DOT_TWITCHES();
 		}
 		break;
 	    }

@@ -9,9 +9,11 @@ typedef enum keyer_mode {KEYER_IAMBIC_A, KEYER_IAMBIC_B, KEYER_ULTIMATIC, KEYER_
 
 #define MIN_WPM 5L
 #define MAX_WPM 40L
+#define DEFAULT_WPM 20
 #define MS_PER_DOT 1200
 #define MS_PER_DASH (3*MS_PER_DOT)
 #define MS_PER_WORD (7*MS_PER_DOT)
+#define WPM_POT_PORT A0
 
 #define LEFT_PADDLE 5
 #define RIGHT_PADDLE 2

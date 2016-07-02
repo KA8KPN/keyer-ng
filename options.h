@@ -8,6 +8,7 @@
 
 #define FEATURE_SERIAL_INPUT
 #define FEATURE_PS2_KEYBOARD
+#define FEATURE_SPEED_CONTROL
 
 #if defined(DISPLAY_LARGE) || defined(DISPLAY_SMALL)
 #define LCD_DISPLAY

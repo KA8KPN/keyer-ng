@@ -11,11 +11,11 @@
 
 morse_to_text *system_mtt = NULL;
 
-void morse_to_text_initialize(const wpm *wpm) {
-    system_mtt = new morse_to_text(wpm);
+void morse_to_text_initialize(void) {
+    system_mtt = new morse_to_text();
 }
 
-morse_to_text::morse_to_text(const wpm *wpm) : m_wpm(wpm) {
+morse_to_text::morse_to_text() {
     m_keyerState = KEY_UP;
     m_kbdBit = 0;
     m_kbdCount = 0;
@@ -31,11 +31,11 @@ input_mode_t morse_to_text::update(unsigned long now, input_mode_t mode) {
 		TRANSMITTER_KEY_DOWN();
 		if (1 & m_kbdBit) {
 		    m_keyerState = KEY_DAH;
-		    m_nextStateTransitionMs = now + m_wpm->dash_twitches();
+		    m_nextStateTransitionMs = now + WPM_DASH_TWITCHES();
 		}
 		else {
 		    m_keyerState = KEY_DIT;
-		    m_nextStateTransitionMs = now + m_wpm->dot_twitches();
+		    m_nextStateTransitionMs = now + WPM_DOT_TWITCHES();
 		}
 	    }
 	    else {
@@ -44,10 +44,10 @@ input_mode_t morse_to_text::update(unsigned long now, input_mode_t mode) {
 		--m_kbdCount;
 		if (m_kbdCount > 0) {
 		    m_kbdBit >>= 1;
-		    m_nextStateTransitionMs = now + m_wpm->dot_twitches();
+		    m_nextStateTransitionMs = now + WPM_DOT_TWITCHES();
 		}
 		else {
-		    m_nextStateTransitionMs = now + m_wpm->dash_twitches();
+		    m_nextStateTransitionMs = now + WPM_DASH_TWITCHES();
 		    mode = CONFIG_MANAGER_PADDLES_MODE();
 		}
 	    }
@@ -63,7 +63,7 @@ input_mode_t morse_to_text::update(unsigned long now, input_mode_t mode) {
 		DISPLAY_MANAGER_INPUT_SOURCE(mode);
 		m_keyerState = KEY_DAH;
 		m_kbdCount = 1;
-		m_nextStateTransitionMs = now + m_wpm->dash_twitches() + m_wpm->dot_twitches();
+		m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + WPM_DOT_TWITCHES();
 		DISPLAY_MANAGER_SCROLLING_TEXT(' ');
 	    }
 	    else if (0xd000 > z) {

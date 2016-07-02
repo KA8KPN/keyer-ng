@@ -13,8 +13,6 @@
 
 #include "keyer.h"
 
-wpm wpm(A0);
-
 input_mode_t input_mode;
 
 #define DEFINE_MORSE_TABLES
@@ -24,9 +22,10 @@ void setup () {
     input_mode = MODE_PADDLE_NORMAL;
 
     DISPLAY_MANAGER_INITIALIZE();  // This needs to be first because the other options may write to it
-    MORSE_TO_TEXT_INITIALIZE(&wpm);
+    WPM_INITIALIZE();
+    MORSE_TO_TEXT_INITIALIZE();
     KEYING_INITIALIZE();
-    PADDLES_INITIALIZE(&wpm, RIGHT_PADDLE, LEFT_PADDLE);
+    PADDLES_INITIALIZE(RIGHT_PADDLE, LEFT_PADDLE);
     SERIAL_INITIALIZE();
     PS2_KEYBOARD_INITIALIZE();
     CONFIG_MANAGER_INITIALIZE();  // This needs to be after all the configurable options
@@ -39,5 +38,5 @@ void loop() {
     SERIAL_UPDATE();
     PS2_KEYBOARD_UPDATE();
     input_mode = MORSE_TO_TEXT_UPDATE(now, input_mode);
-    wpm.update();
+    WPM_UPDATE();
 }	

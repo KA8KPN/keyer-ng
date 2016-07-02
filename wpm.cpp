@@ -1,9 +1,19 @@
-#include "Arduino.h"
+#include "options.h"
+
+#if defined(FEATURE_SPEED_CONTROL)
+
+#include <Arduino.h>
 
 #include "wpm.h"
 #include "display.h"
 
 #include "keyer.h"
+
+wpm *system_wpm = NULL;
+
+void wpm_initialize(void) {
+    system_wpm = new wpm(WPM_POT_PORT);
+}
 
 wpm::wpm(byte potPin) : m_potPin(potPin) {
 }
@@ -21,3 +31,4 @@ void wpm::update(void) {
     m_wordTwitches = MS_PER_WORD/wpm;
 }
 
+#endif // defined(FEATURE_SPEED_CONTROL)
