@@ -12,11 +12,10 @@ void ps2_keyboard_setup(void);
 
 class ps2_keyboard {
 public:
-    ps2_keyboard(display *display_manager, morse_to_text *mtt);
+    ps2_keyboard(morse_to_text *mtt);
     void update(void);
 
 private:
-    display *m_displayManager;
     morse_to_text *m_mtt;
 };
 

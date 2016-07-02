@@ -22,6 +22,4 @@ typedef enum keyer_mode { MODE_PADDLE_NORMAL, MODE_PADDLE_REVERSE, MODE_KEYBOARD
 #define KBD_DATA A3
 #define KBD_IRQ 3
 
-extern String input_strings[];
-
 #endif // KEYER_H_INCLUDED

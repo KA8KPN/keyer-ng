@@ -11,11 +11,10 @@ void serial_setup(void);
 
 class serial {
 public:
-    serial(display *display_manager, morse_to_text *mtt, bool echo);
+    serial(morse_to_text *mtt, bool echo);
     void update(void);
 
 private:
-    display *m_displayManager;
     morse_to_text *m_mtt;
     bool m_echoChars;
 };

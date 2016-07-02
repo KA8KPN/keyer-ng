@@ -9,7 +9,7 @@ void ps2_keyboard_setup(void) {
 }
 
 
-ps2_keyboard::ps2_keyboard(display *display_manager, morse_to_text *mtt) : m_displayManager(display_manager), m_mtt(mtt) {
+ps2_keyboard::ps2_keyboard(morse_to_text *mtt) : m_mtt(mtt) {
 }
 
 void ps2_keyboard::update(void) {

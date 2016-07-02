@@ -1,13 +1,14 @@
 #include <Arduino.h>
 
 #include "paddles.h"
+#include "display.h"
 #include "morse_tables.h"
 
 paddles *system_paddles = NULL;
 
-void paddles_initialize(keying *transmitter, display *display_manager, const wpm *wpm, byte right_paddle, byte left_paddle)
+void paddles_initialize(keying *transmitter, const wpm *wpm, byte right_paddle, byte left_paddle)
 {
-    system_paddles = new paddles(transmitter, display_manager, wpm, right_paddle, left_paddle);
+    system_paddles = new paddles(transmitter, wpm, right_paddle, left_paddle);
 
     pinMode(left_paddle, INPUT);
     digitalWrite(left_paddle, HIGH);
@@ -15,7 +16,7 @@ void paddles_initialize(keying *transmitter, display *display_manager, const wpm
     digitalWrite(right_paddle, HIGH);
 }
 
-paddles::paddles(keying *transmitter, display *display_manager, const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_transmitter(transmitter), m_displayManager(display_manager), m_wpm(wpm), m_leftPaddle(left_paddle), m_rightPaddle(right_paddle), m_paddleMode(MODE_PADDLE_NORMAL) {
+paddles::paddles(keying *transmitter, const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_transmitter(transmitter), m_wpm(wpm), m_leftPaddle(left_paddle), m_rightPaddle(right_paddle), m_paddleMode(MODE_PADDLE_NORMAL) {
     m_nextStateTransitionMs = 100 + millis();
     m_startReadingPaddlesMs = 0;
     m_keyerState = KEY_UP;
@@ -39,7 +40,7 @@ keyer_mode_t paddles::update(unsigned long now, keyer_mode_t keyer_mode) {
 	    keyer_state_t tempKeyerState;
  
 	    tempKeyerState = m_keyerState;
-	    m_displayManager->input_source(input_strings[keyer_mode]);
+	    DISPLAY_MANAGER_INPUT_SOURCE(keyer_mode);
 	    switch(m_keyerState) {
 	    case KEY_DIT:
 	    case KEY_DAH:
@@ -103,7 +104,7 @@ keyer_mode_t paddles::update(unsigned long now, keyer_mode_t keyer_mode) {
 	    default:
 		if (KEY_UP == m_lastKeyerState) {
 		    if (0 != morse_decode_table[m_morseTableState].c) {
-			m_displayManager->scrolling_text(morse_decode_table[m_morseTableState].c);
+			DISPLAY_MANAGER_SCROLLING_TEXT(morse_decode_table[m_morseTableState].c);
 		    }
 		    m_morseTableState = 0;
 		}

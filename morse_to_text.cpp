@@ -3,8 +3,9 @@
 #include "morse_to_text.h"
 #include "morse_tables.h"
 #include "config_manager.h"
+#include "display.h"
 
-morse_to_text::morse_to_text(keying *transmitter, display *display_manager, const wpm *wpm) : m_transmitter(transmitter), m_displayManager(display_manager), m_wpm(wpm) {
+morse_to_text::morse_to_text(keying *transmitter, const wpm *wpm) : m_transmitter(transmitter), m_wpm(wpm) {
     m_keyerState = KEY_UP;
     m_kbdBit = 0;
     m_kbdCount = 0;
@@ -49,21 +50,22 @@ keyer_mode_t morse_to_text::update(unsigned long now, keyer_mode_t mode) {
 	if (z) {
 	    if (0xd000 == z) {
 		mode = MODE_SERIAL;
-		m_displayManager->input_source(input_strings[mode]);
+		DISPLAY_MANAGER_INPUT_SOURCE(mode);
 		m_keyerState = KEY_DAH;
 		m_kbdCount = 1;
 		m_nextStateTransitionMs = now + m_wpm->dash_twitches() + m_wpm->dot_twitches();
-		m_displayManager->scrolling_text(' ');
+		DISPLAY_MANAGER_SCROLLING_TEXT(' ');
 	    }
 	    else if (0xd000 > z) {
 		mode = MODE_SERIAL;
-		m_displayManager->input_source(input_strings[mode]);
+		DISPLAY_MANAGER_INPUT_SOURCE(mode);
 		m_kbdCount = z >> 12;
 		m_kbdBit = z & 0x0fff;
-		m_displayManager->scrolling_text(c);
+		DISPLAY_MANAGER_SCROLLING_TEXT(c);
 	    }
 	    else if (0xe000 == (0xf000 & z)) {
 		CONFIG_MANAGER_PROCESS_COMMAND(0x0fff & z);
+		mode = CONFIG_MANAGER_PADDLES_MODE();
 	    }
 	    else {
 		mode = CONFIG_MANAGER_PADDLES_MODE();

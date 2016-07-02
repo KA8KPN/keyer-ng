@@ -10,7 +10,7 @@ void serial_setup(void) {
 }
 
 
-serial::serial(display *display_manager, morse_to_text *mtt, bool echo) : m_displayManager(display_manager), m_mtt(mtt), m_echoChars(echo) {
+serial::serial(morse_to_text *mtt, bool echo) : m_mtt(mtt), m_echoChars(echo) {
 }
 
 void serial::update(void) {

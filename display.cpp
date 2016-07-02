@@ -2,7 +2,9 @@
 
 #include "display.h"
 
-#include "options.h"
+#ifdef LCD_DISPLAY
+
+#include "config_manager.h"
 
 #if defined(DISPLAY_LARGE)
 #define ROWS     4
@@ -58,6 +60,73 @@
 #define BUFFER_WIDTH 16
 #endif // !DISPLAY_LARGE
 
+#if defined(DISPLAY_LARGE)
+String xmit_strings[] = {
+    "Xmitter 1",
+    "Xmitter 2",
+    "Xmitter 3",
+    "Xmitter 4",
+    "Practice "
+};
+#else // !defined(DISPLAY_LARGE)
+String key_modestrings[] = {
+    "Tx1",
+    "Tx2",
+    "Tx3",
+    "Tx4",
+    "CPO"
+};
+#endif // !defined(DISPLAY_LARGE)
+
+#if defined(DISPLAY_LARGE)
+String key_modestrings[] = {
+    "Iambic-A",
+    "Iambic-B",
+    "Ultimatc"
+    "Semiauto",
+    "Straight"
+};
+#else // !defined(DISPLAY_LARGE)
+String key_modestrings[] = {
+"IamA",
+    "IamB",
+    "Ulti"
+    "Bug ",
+    "Strt"
+    };
+#endif // !defined(DISPLAY_LARGE)
+
+#if defined(DISPLAY_LARGE)
+static String input_strings[] = {
+    "Norm Paddle",
+    "Rev Paddle ",
+    "Keyboard   ",
+    "Serial Port",
+    "Memory ##  "
+};
+#else // !defined(DISPLAY_LARGE)
+static String input_strings[] = {
+    "Nor",
+    "Rev",
+    "Kbd",
+    "Srl",
+    "Mem"
+};
+#endif // !defined(DISPLAY_LARGE)
+
+
+display *system_display_manager = NULL;
+
+void display_manager_initialize(void) {
+    system_display_manager = new display();
+    system_display_manager->init();
+
+    system_display_manager->key_mode(key_modestrings[0]);
+    system_display_manager->sidetone(SIDETONE_FREQUENCY);
+    system_display_manager->input_source(CONFIG_MANAGER_PADDLES_MODE());
+    system_display_manager->xmit_mode(xmit_strings[0]);
+}
+
 display::display(void) {
     m_display = new LiquidCrystal_I2C(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
@@ -108,8 +177,10 @@ void display::xmit_mode(const String &mode) {
 }
 
 
-void display::input_source(const String &mode) {
-    write_string_and_fill(INPUT_COL, INPUT_ROW, mode, INPUT_WIDTH);
+void display::input_source(keyer_mode_t mode) {
+    if ((mode >= 0) && (mode <= MODE_MEMORY)) {
+	write_string_and_fill(INPUT_COL, INPUT_ROW, input_strings[mode], INPUT_WIDTH);
+    }
 }
 
 void display::scrolling_text(char c) {
@@ -144,3 +215,5 @@ void display::sidetone(int freq) {
 #endif // !defined(DISPLAY_LARGE)
     m_display->write((const uint8_t*) buffer, SIDETONE_WIDTH);
 }
+
+#endif // LCD_DISPLAY

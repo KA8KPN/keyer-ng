@@ -1,6 +1,7 @@
 #include "config_manager.h"
 
 #include "paddles.h"
+#include "display.h"
 
 config_manager *system_config_manager = NULL;
 

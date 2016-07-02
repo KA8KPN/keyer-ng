@@ -5,7 +5,7 @@
 
 class wpm {
 public:
-    wpm(byte potPin, display *display_manager);
+    wpm(byte potPin);
     void update(void);
     unsigned dot_twitches(void) const { return m_dotTwitches; }
     unsigned dash_twitches(void) const { return m_dashTwitches; }
@@ -16,7 +16,6 @@ private:
     unsigned m_dotTwitches;
     unsigned m_dashTwitches;
     unsigned m_wordTwitches;
-    display *m_displayManager;
 };
 
 #endif // !WPM_H_INCLUDED
