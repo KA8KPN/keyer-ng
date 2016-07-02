@@ -103,7 +103,7 @@ in program mode and
  3Paddles Reverse
  4
 
-When not in program mode.
+pWhen not in program mode.
 
 I also want to show the serial number, when that feature is included.  I think
 I can put that on the 3rd row.  So, how about this?
@@ -114,6 +114,13 @@ I can put that on the 3rd row.  So, how about this?
  2Xmitter 1  Tone  800
  3Norm Paddle    #####
  4
+
+--------------------------------------------------
+
+Configuration changes through the keyboard
+
+Ctrl-O toggles the sidetone on and off.  The K3NG software also does \o and CommandMode-o (through paddles)
+Ctrl-N toggles the paddle reverse.  The K3NG software also does \n and CommandMode-n (through paddles)
 
 
 --------------------------------------------------

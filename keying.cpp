@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "keying.h"
+#include "keyer.h"
 
 static void (*take_sidetone_action)(int frequency, bool key_down);
 

@@ -3,8 +3,21 @@
 #include "paddles.h"
 #include "morse_tables.h"
 
-paddles::paddles(keying *transmitter, display *display_manager, const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_transmitter(transmitter), m_displayManager(display_manager), m_wpm(wpm), m_leftPaddle(left_paddle), m_rightPaddle(right_paddle) {
+paddles *system_paddles = NULL;
+
+void paddles_initialize(keying *transmitter, display *display_manager, const wpm *wpm, byte right_paddle, byte left_paddle)
+{
+    system_paddles = new paddles(transmitter, display_manager, wpm, right_paddle, left_paddle);
+
+    pinMode(left_paddle, INPUT);
+    digitalWrite(left_paddle, HIGH);
+    pinMode(right_paddle, INPUT);
+    digitalWrite(right_paddle, HIGH);
+}
+
+paddles::paddles(keying *transmitter, display *display_manager, const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_transmitter(transmitter), m_displayManager(display_manager), m_wpm(wpm), m_leftPaddle(left_paddle), m_rightPaddle(right_paddle), m_paddleMode(MODE_PADDLE_NORMAL) {
     m_nextStateTransitionMs = 100 + millis();
+    m_startReadingPaddlesMs = 0;
     m_keyerState = KEY_UP;
     m_lastKeyerState = KEY_UP;
     m_morseTableState = 0;
@@ -22,7 +35,7 @@ keyer_mode_t paddles::update(unsigned long now, keyer_mode_t keyer_mode) {
     }
 
     if (now >= m_nextStateTransitionMs) {
-	if (MODE_PADDLE_NORMAL == keyer_mode) {
+	if ((MODE_PADDLE_NORMAL == keyer_mode) || (MODE_PADDLE_REVERSE == keyer_mode)) {
 	    keyer_state_t tempKeyerState;
  
 	    tempKeyerState = m_keyerState;
@@ -103,4 +116,19 @@ keyer_mode_t paddles::update(unsigned long now, keyer_mode_t keyer_mode) {
 	}
     }
     return keyer_mode;
+}
+
+
+keyer_mode_t paddles::toggle_reverse(void) {
+    if (MODE_PADDLE_NORMAL == m_paddleMode) {
+	m_dahPaddle = m_leftPaddle;
+	m_ditPaddle = m_rightPaddle;
+	m_paddleMode = MODE_PADDLE_REVERSE;
+    }
+    else {
+	m_ditPaddle = m_leftPaddle;
+	m_dahPaddle = m_rightPaddle;
+	m_paddleMode = MODE_PADDLE_NORMAL;
+    }
+    return m_paddleMode;
 }

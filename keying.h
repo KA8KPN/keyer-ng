@@ -1,8 +1,6 @@
 #if !defined(KEYING_H)
 #define KEYING_H
 
-#define SIDETONE 4
-
 typedef enum keyer_state { KEY_DIT, KEY_DAH, KEY_UP } keyer_state_t;
 
 class keying {

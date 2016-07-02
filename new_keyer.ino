@@ -9,6 +9,7 @@
 #include "serial.h"
 #include "ps2_keyboard.h"
 #include "morse_to_text.h"
+#include "config_manager.h"
 
 #include "keyer.h"
 
@@ -69,7 +70,6 @@ String input_strings[] = {
 keying transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
 display display_manager;
 wpm wpm(A0, &display_manager);
-paddles paddles(&transmitter, &display_manager, &wpm, RIGHT_PADDLE, LEFT_PADDLE);
 morse_to_text mtt(&transmitter, &display_manager, &wpm);
 serial serial(&display_manager, &mtt, true);
 ps2_keyboard keyboard(&display_manager, &mtt);
@@ -80,35 +80,34 @@ keyer_mode_t keyer_mode;
 #include "morse_tables.h"
 
 void setup () {
-    keyer_mode = MODE_PADDLE_NORMAL;
-
-    pinMode(LEFT_PADDLE, INPUT);
-    digitalWrite(LEFT_PADDLE, HIGH);
-    pinMode(RIGHT_PADDLE, INPUT);
-    digitalWrite(RIGHT_PADDLE, HIGH);
-
     pinMode(SIDETONE, OUTPUT);
     digitalWrite(SIDETONE, LOW);
 
-    display_manager.init();
-    
-    display_manager.key_mode(key_modestrings[0]);
-    display_manager.sidetone(SIDETONE_FREQUENCY);
-    display_manager.input_source(input_strings[keyer_mode]);
-    display_manager.xmit_mode(xmit_strings[0]);
+    keyer_mode = MODE_PADDLE_NORMAL;
 
     // Without the serial support, the firmware takes 11316 bytes
     // Initial support, 12054 bytes
     // With space 12096
     // with working space 12164
+    PADDLES_INITIALIZE(&transmitter, &display_manager, &wpm, RIGHT_PADDLE, LEFT_PADDLE);
     serial_setup();
     ps2_keyboard_setup();
+    CONFIG_MANAGER_INITIALIZE();  // This needs to be last of the configurable options
+
+    // The display isn't configurable.  It either exists, or it doesn't
+    display_manager.init();
+    
+    display_manager.key_mode(key_modestrings[0]);
+    display_manager.sidetone(SIDETONE_FREQUENCY);
+    display_manager.input_source(input_strings[CONFIG_MANAGER_PADDLES_MODE()]);
+    display_manager.xmit_mode(xmit_strings[0]);
+
 }
 
 void loop() {
     unsigned long now = millis();
 
-    keyer_mode = paddles.update(now, keyer_mode);
+    keyer_mode = PADDLES_UPDATE(now, keyer_mode);
     serial.update();
     keyboard.update();
     keyer_mode = mtt.update(now, keyer_mode);

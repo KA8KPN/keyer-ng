@@ -2,6 +2,7 @@
 
 #include "morse_to_text.h"
 #include "morse_tables.h"
+#include "config_manager.h"
 
 morse_to_text::morse_to_text(keying *transmitter, display *display_manager, const wpm *wpm) : m_transmitter(transmitter), m_displayManager(display_manager), m_wpm(wpm) {
     m_keyerState = KEY_UP;
@@ -36,7 +37,7 @@ keyer_mode_t morse_to_text::update(unsigned long now, keyer_mode_t mode) {
 		}
 		else {
 		    m_nextStateTransitionMs = now + m_wpm->dash_twitches();
-		    mode = MODE_PADDLE_NORMAL;
+		    mode = CONFIG_MANAGER_PADDLES_MODE();
 		}
 	    }
 	}
@@ -61,12 +62,15 @@ keyer_mode_t morse_to_text::update(unsigned long now, keyer_mode_t mode) {
 		m_kbdBit = z & 0x0fff;
 		m_displayManager->scrolling_text(c);
 	    }
+	    else if (0xe000 == (0xf000 & z)) {
+		CONFIG_MANAGER_PROCESS_COMMAND(0x0fff & z);
+	    }
 	    else {
-		mode = MODE_PADDLE_NORMAL;
+		mode = CONFIG_MANAGER_PADDLES_MODE();
 	    }
 	}
 	else {
-	    mode = MODE_PADDLE_NORMAL;
+	    mode = CONFIG_MANAGER_PADDLES_MODE();
 	}
     }
     return mode;

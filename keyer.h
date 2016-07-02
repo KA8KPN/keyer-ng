@@ -16,6 +16,7 @@ typedef enum keyer_mode { MODE_PADDLE_NORMAL, MODE_PADDLE_REVERSE, MODE_KEYBOARD
 
 #define PTT_1    13
 #define KEY_OUT_1 11
+#define SIDETONE 4
 #define SIDETONE_FREQUENCY 800
 
 #define KBD_DATA A3
