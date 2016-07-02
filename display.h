@@ -12,10 +12,10 @@ class display {
 public:
     display(void);
     void init(void);
-    void key_mode(const String &mode);
+    void key_mode(keyer_mode_t mode);
     void wpm(int wpm);
-    void xmit_mode(const String &mode);
-    void input_source(keyer_mode_t mode);
+    void xmit_mode(int xmitter);
+    void input_source(input_mode_t mode);
     void scrolling_text(char c);
     void sidetone(int freq);
 
@@ -30,7 +30,7 @@ void display_manager_initialize(void);
 #define DISPLAY_MANAGER_INITIALIZE()         display_manager_initialize()
 #define DISPLAY_MANAGER_KEY_MODE(mode)       system_display_manager->key_mode(mode)
 #define DISPLAY_MANAGER_WPM(wpm)             system_display_manager->wpm(wpm)
-#define DISPLAY_MANAGER_XMIT_MODE(mode)      system_display_manager->xmit_mode(mode)
+#define DISPLAY_MANAGER_XMIT_MODE(xmitter)   system_display_manager->xmit_mode(xmitter)
 #define DISPLAY_MANAGER_INPUT_SOURCE(source) system_display_manager->input_source(source)
 #define DISPLAY_MANAGER_SCROLLING_TEXT(c)    system_display_manager->scrolling_text(c)
 #define DISPLAY_MANAGER_SIDETONE(freq)       system_display_manager->sidetone(freq)
@@ -38,7 +38,7 @@ void display_manager_initialize(void);
 #define DISPLAY_MANAGER_INITIALIZE()
 #define DISPLAY_MANAGER_KEY_MODE(mode)       ((void)mode)
 #define DISPLAY_MANAGER_WPM(wpm)             ((void)wpm)
-#define DISPLAY_MANAGER_XMIT_MODE(mode)      ((void)mode)
+#define DISPLAY_MANAGER_XMIT_MODE(xmitter)   ((void)xmitter)
 #define DISPLAY_MANAGER_INPUT_SOURCE(source) ((void)source)
 #define DISPLAY_MANAGER_SCROLLING_TEXT(c)    ((void)c)
 #define DISPLAY_MANAGER_SIDETONE(freq)       ((void)freq)

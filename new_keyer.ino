@@ -18,13 +18,13 @@ morse_to_text mtt(&wpm);
 serial serial(&mtt, true);
 ps2_keyboard keyboard(&mtt);
 
-keyer_mode_t keyer_mode;
+input_mode_t input_mode;
 
 #define DEFINE_MORSE_TABLES
 #include "morse_tables.h"
 
 void setup () {
-    keyer_mode = MODE_PADDLE_NORMAL;
+    input_mode = MODE_PADDLE_NORMAL;
 
     DISPLAY_MANAGER_INITIALIZE();  // This needs to be first because the other options may write to it
 
@@ -38,9 +38,9 @@ void setup () {
 void loop() {
     unsigned long now = millis();
 
-    keyer_mode = PADDLES_UPDATE(now, keyer_mode);
+    input_mode = PADDLES_UPDATE(now, input_mode);
     serial.update();
     keyboard.update();
-    keyer_mode = mtt.update(now, keyer_mode);
+    input_mode = mtt.update(now, input_mode);
     wpm.update();
 }	

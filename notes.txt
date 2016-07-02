@@ -129,13 +129,13 @@ DONE)  Split the paddle logic out of the main function.
 
 DONE)  Split the serial port handling out of the main function.
 
-DONE) Split the text to morse functionality out of the serial port handling.
+DONE)  Split the text to morse functionality out of the serial port handling.
 
-DONE) add PS/2 Morse keyboard
+DONE)  add PS/2 Morse keyboard
 
 DONE)  Configuration changes through serial and keyboard.  The first change will be reverse paddles and sidetone toggle
 
-Figure out how to do the display strings better.  Maybe with defined constants that only the display class knows how to interpret.  I can't tell the difference between serial port input and keyboard input, so take that into account
+DONE)  Figure out how to do the display strings better.  Maybe with defined constants that only the display class knows how to interpret.  I can't tell the difference between serial port input and keyboard input, so take that into account
 
 Set up a mechanism for including or eliminating specified features and options similar to the way K3NG's firmware set does.  This is a big invasive change, so I want to do this soon before things get too far advanced.
 

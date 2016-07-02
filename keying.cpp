@@ -108,4 +108,5 @@ void keying_initialize(void) {
     digitalWrite(SIDETONE, LOW);
 
     system_transmitter = new keying(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
+    DISPLAY_MANAGER_XMIT_MODE(1);
 }

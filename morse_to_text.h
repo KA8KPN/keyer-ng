@@ -9,7 +9,7 @@
 class morse_to_text {
 public:
     morse_to_text(const wpm *wpm);
-    keyer_mode_t update(unsigned long now, keyer_mode_t mode);
+    input_mode_t update(unsigned long now, input_mode_t mode);
     bool buffer_not_full(void);
     void add_to_buffer(char c);
 

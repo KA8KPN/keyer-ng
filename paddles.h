@@ -8,8 +8,8 @@
 class paddles {
 public:
     paddles(const wpm *wpm, byte right_paddle, byte left_paddle);
-    keyer_mode_t update(unsigned long now, keyer_mode_t mode);
-    keyer_mode_t toggle_reverse(void);
+    input_mode_t update(unsigned long now, input_mode_t mode);
+    input_mode_t toggle_reverse(void);
 
 private:
     keyer_state_t m_keyerState;
@@ -22,7 +22,7 @@ private:
     const uint8_t m_leftPaddle, m_rightPaddle;
     uint8_t m_ditPaddle, m_dahPaddle;
     bool m_ditClosed, m_dahClosed;
-    keyer_mode_t m_paddleMode;
+    input_mode_t m_paddleMode;
 };
 
 extern paddles *system_paddles;

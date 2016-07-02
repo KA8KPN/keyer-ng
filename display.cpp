@@ -62,19 +62,19 @@
 
 #if defined(DISPLAY_LARGE)
 String xmit_strings[] = {
+    "Practice ",
     "Xmitter 1",
     "Xmitter 2",
     "Xmitter 3",
     "Xmitter 4",
-    "Practice "
 };
 #else // !defined(DISPLAY_LARGE)
 String xmit_strings[] = {
+    "CPO",
     "Tx1",
     "Tx2",
     "Tx3",
-    "Tx4",
-    "CPO"
+    "Tx4"
 };
 #endif // !defined(DISPLAY_LARGE)
 
@@ -88,7 +88,7 @@ String key_modestrings[] = {
 };
 #else // !defined(DISPLAY_LARGE)
 String key_modestrings[] = {
-"IamA",
+    "IamA",
     "IamB",
     "Ulti"
     "Bug ",
@@ -101,7 +101,6 @@ static String input_strings[] = {
     "Norm Paddle",
     "Rev Paddle ",
     "Keyboard   ",
-    "Serial Port",
     "Memory ##  "
 };
 #else // !defined(DISPLAY_LARGE)
@@ -109,7 +108,6 @@ static String input_strings[] = {
     "Nor",
     "Rev",
     "Kbd",
-    "Srl",
     "Mem"
 };
 #endif // !defined(DISPLAY_LARGE)
@@ -121,9 +119,7 @@ void display_manager_initialize(void) {
     system_display_manager = new display();
     system_display_manager->init();
 
-    system_display_manager->key_mode(key_modestrings[0]);
     system_display_manager->input_source(CONFIG_MANAGER_PADDLES_MODE());
-    system_display_manager->xmit_mode(xmit_strings[0]);
 }
 
 display::display(void) {
@@ -157,8 +153,10 @@ void display::init(void) {
     m_display->noAutoscroll();
 }
 
-void display::key_mode(const String &mode) {
-    write_string_and_fill(KEYING_MODE_COL, KEYING_MODE_ROW, mode, KEYING_MODE_WIDTH);
+void display::key_mode(keyer_mode_t mode) {
+    if ((KEYER_IAMBIC_A <= mode) && (KEYER_STRAIGHT >= mode)) {
+	write_string_and_fill(KEYING_MODE_COL, KEYING_MODE_ROW, key_modestrings[mode], KEYING_MODE_WIDTH);
+    }
 }
 
 
@@ -171,12 +169,14 @@ void display::wpm(int wpm) {
 }
 
 
-void display::xmit_mode(const String &mode) {
-    write_string_and_fill(XMITTER_COL, XMITTER_ROW, mode, XMITTER_WIDTH);
+void display::xmit_mode(int xmitter) {
+    if ((0 <= xmitter) && (4 >= xmitter)) {
+	write_string_and_fill(XMITTER_COL, XMITTER_ROW, xmit_strings[xmitter], XMITTER_WIDTH);
+    }
 }
 
 
-void display::input_source(keyer_mode_t mode) {
+void display::input_source(input_mode_t mode) {
     if ((mode >= 0) && (mode <= MODE_MEMORY)) {
 	write_string_and_fill(INPUT_COL, INPUT_ROW, input_strings[mode], INPUT_WIDTH);
     }

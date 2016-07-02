@@ -14,6 +14,7 @@ void paddles_initialize(const wpm *wpm, byte right_paddle, byte left_paddle)
     digitalWrite(left_paddle, HIGH);
     pinMode(right_paddle, INPUT);
     digitalWrite(right_paddle, HIGH);
+    DISPLAY_MANAGER_KEY_MODE(KEYER_IAMBIC_A);
 }
 
 paddles::paddles(const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_wpm(wpm), m_leftPaddle(left_paddle), m_rightPaddle(right_paddle), m_paddleMode(MODE_PADDLE_NORMAL) {
@@ -29,18 +30,18 @@ paddles::paddles(const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_
 }
 
 
-keyer_mode_t paddles::update(unsigned long now, keyer_mode_t keyer_mode) {
+input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
     if (now >= m_startReadingPaddlesMs) {
 	m_dahClosed = m_dahClosed || (0 == digitalRead(m_dahPaddle));
 	m_ditClosed = m_ditClosed || (0 == digitalRead(m_ditPaddle));
     }
 
     if (now >= m_nextStateTransitionMs) {
-	if ((MODE_PADDLE_NORMAL == keyer_mode) || (MODE_PADDLE_REVERSE == keyer_mode)) {
+	if ((MODE_PADDLE_NORMAL == input_mode) || (MODE_PADDLE_REVERSE == input_mode)) {
 	    keyer_state_t tempKeyerState;
  
 	    tempKeyerState = m_keyerState;
-	    DISPLAY_MANAGER_INPUT_SOURCE(keyer_mode);
+	    DISPLAY_MANAGER_INPUT_SOURCE(input_mode);
 	    switch(m_keyerState) {
 	    case KEY_DIT:
 	    case KEY_DAH:
@@ -116,11 +117,11 @@ keyer_mode_t paddles::update(unsigned long now, keyer_mode_t keyer_mode) {
 	    }
 	}
     }
-    return keyer_mode;
+    return input_mode;
 }
 
 
-keyer_mode_t paddles::toggle_reverse(void) {
+input_mode_t paddles::toggle_reverse(void) {
     if (MODE_PADDLE_NORMAL == m_paddleMode) {
 	m_dahPaddle = m_leftPaddle;
 	m_ditPaddle = m_rightPaddle;

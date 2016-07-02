@@ -9,10 +9,10 @@ class config_manager {
 public:
     config_manager(void);
     void process_command(uint16_t command);
-    keyer_mode_t paddles_mode(void) const { return m_paddlesMode; }
+    input_mode_t paddles_mode(void) const { return m_paddlesMode; }
 
 private:
-    keyer_mode_t m_paddlesMode;
+    input_mode_t m_paddlesMode;
 };
 
 

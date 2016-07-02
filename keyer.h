@@ -3,7 +3,9 @@
 
 #include "options.h"
 
-typedef enum keyer_mode { MODE_PADDLE_NORMAL, MODE_PADDLE_REVERSE, MODE_KEYBOARD, MODE_SERIAL, MODE_MEMORY } keyer_mode_t;
+typedef enum input_mode { MODE_PADDLE_NORMAL, MODE_PADDLE_REVERSE, MODE_KEYBOARD, MODE_MEMORY } input_mode_t;
+
+typedef enum keyer_mode {KEYER_IAMBIC_A, KEYER_IAMBIC_B, KEYER_ULTIMATIC, KEYER_SEMIAUTO, KEYER_STRAIGHT } keyer_mode_t;
 
 #define MIN_WPM 5L
 #define MAX_WPM 40L

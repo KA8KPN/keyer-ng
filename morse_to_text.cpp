@@ -14,9 +14,9 @@ morse_to_text::morse_to_text(const wpm *wpm) : m_wpm(wpm) {
     m_ePtr = 0;
 }
 
-keyer_mode_t morse_to_text::update(unsigned long now, keyer_mode_t mode) {
+input_mode_t morse_to_text::update(unsigned long now, input_mode_t mode) {
     if (now >= m_nextStateTransitionMs) {
-	if (MODE_SERIAL == mode) {
+	if (MODE_KEYBOARD == mode) {
 	    if (KEY_UP == m_keyerState) {
 		TRANSMITTER_KEY_DOWN();
 		if (1 & m_kbdBit) {
@@ -43,13 +43,13 @@ keyer_mode_t morse_to_text::update(unsigned long now, keyer_mode_t mode) {
 	    }
 	}
     }
-    if ((MODE_SERIAL != mode) && buffer_not_empty()) {
+    if ((MODE_KEYBOARD != mode) && buffer_not_empty()) {
 	char c = read_from_buffer();
 	uint16_t z = morse_table[c];
 	
 	if (z) {
 	    if (0xd000 == z) {
-		mode = MODE_SERIAL;
+		mode = MODE_KEYBOARD;
 		DISPLAY_MANAGER_INPUT_SOURCE(mode);
 		m_keyerState = KEY_DAH;
 		m_kbdCount = 1;
@@ -57,7 +57,7 @@ keyer_mode_t morse_to_text::update(unsigned long now, keyer_mode_t mode) {
 		DISPLAY_MANAGER_SCROLLING_TEXT(' ');
 	    }
 	    else if (0xd000 > z) {
-		mode = MODE_SERIAL;
+		mode = MODE_KEYBOARD;
 		DISPLAY_MANAGER_INPUT_SOURCE(mode);
 		m_kbdCount = z >> 12;
 		m_kbdBit = z & 0x0fff;
