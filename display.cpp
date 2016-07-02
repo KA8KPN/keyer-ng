@@ -122,7 +122,6 @@ void display_manager_initialize(void) {
     system_display_manager->init();
 
     system_display_manager->key_mode(key_modestrings[0]);
-    system_display_manager->sidetone(SIDETONE_FREQUENCY);
     system_display_manager->input_source(CONFIG_MANAGER_PADDLES_MODE());
     system_display_manager->xmit_mode(xmit_strings[0]);
 }

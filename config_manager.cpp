@@ -2,6 +2,7 @@
 
 #include "paddles.h"
 #include "display.h"
+#include "keying.h"
 
 config_manager *system_config_manager = NULL;
 
@@ -12,6 +13,10 @@ void config_manager::process_command(uint16_t command) {
     switch(command) {
     case 'N':
 	m_paddlesMode = PADDLES_REVERSE();
+	break;
+
+    case 'O':
+	TOGGLE_SIDETONE_ENABLE();
 	break;
 
     default:

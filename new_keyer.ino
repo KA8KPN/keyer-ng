@@ -13,9 +13,8 @@
 
 #include "keyer.h"
 
-keying transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
 wpm wpm(A0);
-morse_to_text mtt(&transmitter, &wpm);
+morse_to_text mtt(&wpm);
 serial serial(&mtt, true);
 ps2_keyboard keyboard(&mtt);
 
@@ -25,22 +24,15 @@ keyer_mode_t keyer_mode;
 #include "morse_tables.h"
 
 void setup () {
-    pinMode(SIDETONE, OUTPUT);
-    digitalWrite(SIDETONE, LOW);
-
     keyer_mode = MODE_PADDLE_NORMAL;
 
-    // Without the serial support, the firmware takes 11316 bytes
-    // Initial support, 12054 bytes
-    // With space 12096
-    // with working space 12164
-    PADDLES_INITIALIZE(&transmitter, &wpm, RIGHT_PADDLE, LEFT_PADDLE);
+    DISPLAY_MANAGER_INITIALIZE();  // This needs to be first because the other options may write to it
+
+    KEYING_INITIALIZE();
+    PADDLES_INITIALIZE(&wpm, RIGHT_PADDLE, LEFT_PADDLE);
     serial_setup();
     ps2_keyboard_setup();
-    CONFIG_MANAGER_INITIALIZE();  // This needs to be last of the configurable options
-
-    // The display isn't configurable.  It either exists, or it doesn't
-    DISPLAY_MANAGER_INITIALIZE();
+    CONFIG_MANAGER_INITIALIZE();  // This needs to be after all the configurable options
 }
 
 void loop() {

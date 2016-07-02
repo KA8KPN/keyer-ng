@@ -5,7 +5,7 @@
 #include "config_manager.h"
 #include "display.h"
 
-morse_to_text::morse_to_text(keying *transmitter, const wpm *wpm) : m_transmitter(transmitter), m_wpm(wpm) {
+morse_to_text::morse_to_text(const wpm *wpm) : m_wpm(wpm) {
     m_keyerState = KEY_UP;
     m_kbdBit = 0;
     m_kbdCount = 0;
@@ -18,7 +18,7 @@ keyer_mode_t morse_to_text::update(unsigned long now, keyer_mode_t mode) {
     if (now >= m_nextStateTransitionMs) {
 	if (MODE_SERIAL == mode) {
 	    if (KEY_UP == m_keyerState) {
-		m_transmitter->key_down();
+		TRANSMITTER_KEY_DOWN();
 		if (1 & m_kbdBit) {
 		    m_keyerState = KEY_DAH;
 		    m_nextStateTransitionMs = now + m_wpm->dash_twitches();
@@ -29,7 +29,7 @@ keyer_mode_t morse_to_text::update(unsigned long now, keyer_mode_t mode) {
 		}
 	    }
 	    else {
-		m_transmitter->key_up();
+		TRANSMITTER_KEY_UP();
 		m_keyerState = KEY_UP;
 		--m_kbdCount;
 		if (m_kbdCount > 0) {

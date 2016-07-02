@@ -6,9 +6,9 @@
 
 paddles *system_paddles = NULL;
 
-void paddles_initialize(keying *transmitter, const wpm *wpm, byte right_paddle, byte left_paddle)
+void paddles_initialize(const wpm *wpm, byte right_paddle, byte left_paddle)
 {
-    system_paddles = new paddles(transmitter, wpm, right_paddle, left_paddle);
+    system_paddles = new paddles(wpm, right_paddle, left_paddle);
 
     pinMode(left_paddle, INPUT);
     digitalWrite(left_paddle, HIGH);
@@ -16,7 +16,7 @@ void paddles_initialize(keying *transmitter, const wpm *wpm, byte right_paddle, 
     digitalWrite(right_paddle, HIGH);
 }
 
-paddles::paddles(keying *transmitter, const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_transmitter(transmitter), m_wpm(wpm), m_leftPaddle(left_paddle), m_rightPaddle(right_paddle), m_paddleMode(MODE_PADDLE_NORMAL) {
+paddles::paddles(const wpm *wpm, uint8_t right_paddle, uint8_t left_paddle) : m_wpm(wpm), m_leftPaddle(left_paddle), m_rightPaddle(right_paddle), m_paddleMode(MODE_PADDLE_NORMAL) {
     m_nextStateTransitionMs = 100 + millis();
     m_startReadingPaddlesMs = 0;
     m_keyerState = KEY_UP;
@@ -84,7 +84,7 @@ keyer_mode_t paddles::update(unsigned long now, keyer_mode_t keyer_mode) {
 		// TODO:  it did not decode.
 		m_morseTableState = morse_decode_table[m_morseTableState].links[0];
 		m_nextStateTransitionMs = now + m_wpm->dot_twitches();
-		m_transmitter->key_down();
+		TRANSMITTER_KEY_DOWN();
 		m_startReadingPaddlesMs = now + m_wpm->dot_twitches();
 		m_ditClosed = false;
 		m_dahClosed = false;
@@ -95,7 +95,7 @@ keyer_mode_t paddles::update(unsigned long now, keyer_mode_t keyer_mode) {
 		// TODO:  it did not decode.
 		m_morseTableState = morse_decode_table[m_morseTableState].links[1];
 		m_nextStateTransitionMs = now + m_wpm->dash_twitches();
-		m_transmitter->key_down();
+		TRANSMITTER_KEY_DOWN();
 		m_startReadingPaddlesMs = now + m_wpm->dash_twitches();
 		m_ditClosed = false;
 		m_dahClosed = false;
@@ -109,7 +109,7 @@ keyer_mode_t paddles::update(unsigned long now, keyer_mode_t keyer_mode) {
 		    m_morseTableState = 0;
 		}
 		else {
-		    m_transmitter->key_up();
+		    TRANSMITTER_KEY_UP();
 		    m_nextStateTransitionMs = now + m_wpm->dot_twitches();
 		}
 		break;

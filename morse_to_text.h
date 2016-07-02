@@ -8,7 +8,7 @@
 
 class morse_to_text {
 public:
-    morse_to_text(keying *transmitter, const wpm *wpm);
+    morse_to_text(const wpm *wpm);
     keyer_mode_t update(unsigned long now, keyer_mode_t mode);
     bool buffer_not_full(void);
     void add_to_buffer(char c);
@@ -16,7 +16,6 @@ public:
 private:
     bool buffer_not_empty(void) { return m_bPtr != m_ePtr;}
     char read_from_buffer(void);
-    keying *m_transmitter;
     const wpm *m_wpm;
     unsigned long m_nextStateTransitionMs;
     keyer_state_t m_keyerState;

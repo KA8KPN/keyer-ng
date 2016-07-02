@@ -133,7 +133,7 @@ DONE) Split the text to morse functionality out of the serial port handling.
 
 DONE) add PS/2 Morse keyboard
 
-Configuration changes through serial and keyboard.  The first change will be reverse paddles and sidetone toggle
+DONE)  Configuration changes through serial and keyboard.  The first change will be reverse paddles and sidetone toggle
 
 Figure out how to do the display strings better.  Maybe with defined constants that only the display class knows how to interpret.  I can't tell the difference between serial port input and keyboard input, so take that into account
 
@@ -156,6 +156,6 @@ DONE) Scrolling text as it is sent (although it could use some enhancement)
 
 DONE) Morse through the serial port (although it could use some enhancement)
 
-I'm having trouble sending KN, figure out why and fix it.
+DONE) I'm having trouble sending KN, figure out why and fix it.  (I modified the paddle scan timing.)
 
 Allow for the programming and playing back of memories.
