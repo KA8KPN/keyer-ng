@@ -137,18 +137,16 @@ DONE)  Configuration changes through serial and keyboard.  The first change will
 
 DONE)  Figure out how to do the display strings better.  Maybe with defined constants that only the display class knows how to interpret.  I can't tell the difference between serial port input and keyboard input, so take that into account
 
-Set up a mechanism for including or eliminating specified features and options similar to the way K3NG's firmware set does.  This is a big invasive change, so I want to do this soon before things get too far advanced.
+DONE)  Set up a mechanism for including or eliminating specified features and options similar to the way K3NG's firmware set does.  This is a big invasive change, so I want to do this soon before things get too far advanced.
 
 Read the buttons
 
-Configuration changes through the paddles with a command button.  The first change will be reverse and sidetone toggle
+Configuration changes through the paddles with a command button.  The first change will be reverse paddles and sidetone toggle
 
 If I don't send anything for a while, and the last character is not a space,
 then the last character on the scrolling display should be a space.
 
-Pass the display manager to the keying constructor (along with the
-"transmitter number") so it can update the display when the transmit mode
-changes.
+Allow the selection of multiple transmitter numbers.  Includes configuration updates and changes to the calls to display.
 
 PTT Logic, including keyer start delay after PTT asserted.
 
