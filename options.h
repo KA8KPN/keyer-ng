@@ -6,8 +6,8 @@
 #define DISPLAY_LARGE
 // #define DISPLAY_SMALL
 
-#ifdef DISPLAY_LARGE
+#if defined(DISPLAY_LARGE) || defined(DISPLAY_SMALL)
 #define LCD_DISPLAY
-#endif // DISPLAY_LARGE
+#endif // DISPLAY_LARGE .or. DISPLAY_SMALL
 
 #endif // OPTIONS_H_INCLUDED

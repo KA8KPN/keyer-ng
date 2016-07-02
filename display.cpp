@@ -42,7 +42,7 @@
 
 #define SPEED_ROW 0
 #define SPEED_COL 5
-#define SPEED_WIDTH 3
+#define SPEED_WIDTH 2
 
 #define XMITTER_ROW 0
 #define XMITTER_COL 8
@@ -50,7 +50,7 @@
 
 #define SIDETONE_ROW 0
 #define SIDETONE_COL 11
-#define SIDETONE_WIDTH 2
+#define SIDETONE_WIDTH 1
 
 #define INPUT_ROW 0
 #define INPUT_COL 13
@@ -69,7 +69,7 @@ String xmit_strings[] = {
     "Practice "
 };
 #else // !defined(DISPLAY_LARGE)
-String key_modestrings[] = {
+String xmit_strings[] = {
     "Tx1",
     "Tx2",
     "Tx3",
