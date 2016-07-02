@@ -159,3 +159,5 @@ DONE) Morse through the serial port (although it could use some enhancement)
 DONE) I'm having trouble sending KN, figure out why and fix it.  (I modified the paddle scan timing.)
 
 Allow for the programming and playing back of memories.
+
+Figure out how to better do the morse tables so that there aren't remnants hanging around if they aren't needed

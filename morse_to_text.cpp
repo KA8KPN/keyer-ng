@@ -1,9 +1,19 @@
+#include "options.h"
+
+#ifdef FEATURE_MORSE_TO_TEXT
+
 #include "Arduino.h"
 
 #include "morse_to_text.h"
 #include "morse_tables.h"
 #include "config_manager.h"
 #include "display.h"
+
+morse_to_text *system_mtt = NULL;
+
+void morse_to_text_initialize(const wpm *wpm) {
+    system_mtt = new morse_to_text(wpm);
+}
 
 morse_to_text::morse_to_text(const wpm *wpm) : m_wpm(wpm) {
     m_keyerState = KEY_UP;
@@ -100,3 +110,4 @@ void morse_to_text::add_to_buffer(char c) {
 	m_ePtr = 127 & (m_ePtr + 1);
     }
 }
+#endif // FEATURE_MORSE_TO_TEXT

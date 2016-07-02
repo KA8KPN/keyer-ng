@@ -1,22 +1,31 @@
 #ifndef SERIAL_H_INCLUDED
 #define SERIAL_H_INCLUDED
 
+#include "options.h"
+
+#ifdef FEATURE_SERIAL_INPUT
 #include "keyer.h"
 #include "keying.h"
 #include "display.h"
 #include "wpm.h"
-#include "morse_to_text.h"
 
-void serial_setup(void);
+void serial_initialize(void);
 
 class serial {
 public:
-    serial(morse_to_text *mtt, bool echo);
+    serial(bool echo);
     void update(void);
 
 private:
-    morse_to_text *m_mtt;
     bool m_echoChars;
 };
+
+extern serial *system_serial;
+#define SERIAL_INITIALIZE() serial_initialize()
+#define SERIAL_UPDATE() system_serial->update()
+#else // ! FEATURE_SERIAL_INPUT
+#define SERIAL_INITIALIZE()
+#define SERIAL_UPDATE()
+#endif // ! FEATURE_SERIAL_INPUT
 
 #endif // SERIAL_H_INCLUDED

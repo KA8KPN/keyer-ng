@@ -6,8 +6,15 @@
 #define DISPLAY_LARGE
 // #define DISPLAY_SMALL
 
+#define FEATURE_SERIAL_INPUT
+#define FEATURE_PS2_KEYBOARD
+
 #if defined(DISPLAY_LARGE) || defined(DISPLAY_SMALL)
 #define LCD_DISPLAY
 #endif // DISPLAY_LARGE .or. DISPLAY_SMALL
+
+#if defined(FEATURE_SERIAL_INPUT) || defined(FEATURE_PS2_KEYBOARD)
+#define FEATURE_MORSE_TO_TEXT
+#endif
 
 #endif // OPTIONS_H_INCLUDED

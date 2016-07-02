@@ -1,20 +1,29 @@
+#include "options.h"
+
+#ifdef FEATURE_SERIAL_INPUT
+
 #include "Arduino.h"
 
 #include "serial.h"
+#include "morse_to_text.h"
 
-void serial_setup(void) {
+serial *system_serial = NULL;
+
+void serial_initialize(void) {
     delay(1000);
     Serial.begin(115200);
     while (!Serial) {
     }
+
+    system_serial = new serial(true);
 }
 
 
-serial::serial(morse_to_text *mtt, bool echo) : m_mtt(mtt), m_echoChars(echo) {
+serial::serial(bool echo) : m_echoChars(echo) {
 }
 
 void serial::update(void) {
-    if (m_mtt->buffer_not_full()) {
+    if (MORSE_TO_TEXT_BUFFER_NOT_FULL()) {
 	if (Serial.available()) {
 	    char c;
 
@@ -25,7 +34,9 @@ void serial::update(void) {
 		    Serial.write('\n');
 		}
 	    }
-	    m_mtt->add_to_buffer(c);
+	    MORSE_TO_TEXT_ADD_TO_BUFFER(c);
 	}
     }
 }
+
+#endif // FEATURE_SERIAL_INPUT
