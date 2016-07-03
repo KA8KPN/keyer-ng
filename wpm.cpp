@@ -22,9 +22,9 @@ void wpm::update(void) {
     int potValue = 0;
     unsigned wpm;
  
-    // The WPM is MIN_WPM + (MAX_WPM - MIN_WPM) * potValue / 1024; appropriately rounded
+    // The WPM is MIN_WPM + (MAX_WPM - MIN_WPM) * potValue / 1023; appropriately rounded
     potValue = analogRead(m_potPin);
-    wpm = MIN_WPM + ((MAX_WPM - MIN_WPM) * potValue + 512L) / 1024L;
+    wpm = MIN_WPM + ((MAX_WPM - MIN_WPM) * potValue + ANALOG_IN_MAX/2) / ANALOG_IN_MAX;
     DISPLAY_MANAGER_WPM(wpm);
     m_dotTwitches = MS_PER_DOT/wpm;
     m_dashTwitches = MS_PER_DASH/wpm;

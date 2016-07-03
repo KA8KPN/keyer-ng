@@ -7,6 +7,8 @@ typedef enum input_mode { MODE_PADDLE_NORMAL, MODE_PADDLE_REVERSE, MODE_KEYBOARD
 
 typedef enum keyer_mode {KEYER_IAMBIC_A, KEYER_IAMBIC_B, KEYER_ULTIMATIC, KEYER_SEMIAUTO, KEYER_STRAIGHT } keyer_mode_t;
 
+#define ANALOG_IN_MAX 1023
+
 #define MIN_WPM 5L
 #define MAX_WPM 40L
 #define DEFAULT_WPM 20
@@ -14,6 +16,9 @@ typedef enum keyer_mode {KEYER_IAMBIC_A, KEYER_IAMBIC_B, KEYER_ULTIMATIC, KEYER_
 #define MS_PER_DASH (3*MS_PER_DOT)
 #define MS_PER_WORD (7*MS_PER_DOT)
 #define WPM_POT_PORT A0
+
+#define BUTTONS_AI_PORT A1
+#define NUM_BUTTONS 13
 
 #define LEFT_PADDLE 5
 #define RIGHT_PADDLE 2

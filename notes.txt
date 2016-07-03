@@ -139,7 +139,7 @@ DONE)  Figure out how to do the display strings better.  Maybe with defined cons
 
 DONE)  Set up a mechanism for including or eliminating specified features and options similar to the way K3NG's firmware set does.  This is a big invasive change, so I want to do this soon before things get too far advanced.
 
-Read the buttons
+DONE)  Read the buttons as a feature
 
 Configuration changes through the paddles with a command button.  The first change will be reverse paddles and sidetone toggle
 
@@ -159,3 +159,8 @@ DONE) I'm having trouble sending KN, figure out why and fix it.  (I modified the
 Allow for the programming and playing back of memories.
 
 Figure out how to better do the morse tables so that there aren't remnants hanging around if they aren't needed
+
+Fix the configuration stuff through the PS/2 keyboard.  I'm not doing control characters properly.
+
+Make runtime configurations persistent as a feature
+

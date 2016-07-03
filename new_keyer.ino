@@ -9,6 +9,7 @@
 #include "serial.h"
 #include "ps2_keyboard.h"
 #include "morse_to_text.h"
+#include "buttons.h"
 #include "config_manager.h"
 
 #include "keyer.h"
@@ -28,6 +29,7 @@ void setup () {
     PADDLES_INITIALIZE(RIGHT_PADDLE, LEFT_PADDLE);
     SERIAL_INITIALIZE();
     PS2_KEYBOARD_INITIALIZE();
+    BUTTONS_INITIALIZE();
     CONFIG_MANAGER_INITIALIZE();  // This needs to be after all the configurable options
 }
 
@@ -37,6 +39,7 @@ void loop() {
     input_mode = PADDLES_UPDATE(now, input_mode);
     SERIAL_UPDATE();
     PS2_KEYBOARD_UPDATE();
+    BUTTONS_UPDATE();
     input_mode = MORSE_TO_TEXT_UPDATE(now, input_mode);
     WPM_UPDATE();
 }	
