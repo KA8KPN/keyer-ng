@@ -54,7 +54,7 @@ input_mode_t morse_to_text::update(unsigned long now, input_mode_t mode) {
 	}
     }
     if ((MODE_KEYBOARD != mode) && buffer_not_empty()) {
-	char c = read_from_buffer();
+	uint8_t c = read_from_buffer();
 	uint16_t z = morse_table[c];
 	
 	if (z) {
