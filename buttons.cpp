@@ -6,6 +6,7 @@
 
 #include "buttons.h"
 #include "morse_to_text.h"
+#include "config_manager.h"
 
 buttons *system_buttons = NULL;
 
@@ -52,7 +53,7 @@ void buttons::update(void) {
 	    m_oldButton = button;
 	    switch(button) {
 	    case 0:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('0');
+                CONFIG_MANAGER_SET_PROGRAM_MODE(!CONFIG_MANAGER_GET_PROGRAM_MODE());
 		break;
 
 	    case 1:

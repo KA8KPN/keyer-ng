@@ -5,26 +5,19 @@ typedef enum keyer_state { KEY_DIT, KEY_DAH, KEY_UP } keyer_state_t;
 
 class keying {
 public:
-    keying(int ptt_line, int key_out_line, int sidetone_freq);
-    void key_up(void);
-    void key_down(void);
-    void ptt_push(void);
-    void ptt_release(void);
-    void set_sidetone_freq(int sidetone_freq);
-    void toggle_sidetone_enable(void);
-
-private:
-    void set_ptt(int ptt_line);
-    void set_key_out(int key_out_line);
-    byte m_pttLine;
-    byte m_keyOutLine;
-    int m_sidetoneFreq;
-    void (*m_keyAction)(byte, byte);
-    void (*m_pttAction)(byte, byte);
-    
+    keying(void);
+    virtual void key_up(void) = 0;
+    virtual void key_down(void) = 0;
+    virtual void ptt_push(void) = 0;
+    virtual void ptt_release(void) = 0;
+    virtual void set_sidetone_freq(int sidetone_freq) = 0;
+    virtual void toggle_sidetone_enable(void) = 0;
+    virtual ~keying(void);
 };
 
+
 void keying_initialize(void);
+void keying_config_mode(boolean enter_config_mode);
 extern keying *system_transmitter;
 
 #define KEYING_INITIALIZE()       keying_initialize()
@@ -34,5 +27,6 @@ extern keying *system_transmitter;
 #define TRANSMITTER_PTT_RELEASE() system_transmitter->ptt_release()
 #define SET_SIDETONE_FREQ(freq)   system_transmitter->set_sidetone_freq(freq)
 #define TOGGLE_SIDETONE_ENABLE()  system_transmitter->toggle_sidetone_enable()
+#define KEYING_PROGRAM_MODE(b)           keying_config_mode(b)
 
 #endif // !defined KEYING_H

@@ -12,7 +12,11 @@
 
 #define KEYING_MODE_ROW 0
 #define KEYING_MODE_COL 0
-#define KEYING_MODE_WIDTH 15
+#define KEYING_MODE_WIDTH 8
+
+#define PROG_MODE_ROW 0
+#define PROG_MODE_COL 9
+#define PROG_MODE_WIDTH 4
 
 #define SPEED_ROW 0
 #define SPEED_COL 15
@@ -51,6 +55,10 @@
 #define SIDETONE_ROW 0
 #define SIDETONE_COL 11
 #define SIDETONE_WIDTH 1
+
+#define PROG_MODE_ROW 0
+#define PROG_MODE_COL 12
+#define PROG_MODE_WIDTH 1
 
 #define INPUT_ROW 0
 #define INPUT_COL 13
@@ -112,6 +120,8 @@ static String input_strings[] = {
 };
 #endif // !defined(DISPLAY_LARGE)
 
+static String prog_mode_string = "Prog";
+
 
 display *system_display_manager = NULL;
 
@@ -156,6 +166,15 @@ void display::init(void) {
 void display::key_mode(keyer_mode_t mode) {
     if ((KEYER_IAMBIC_A <= mode) && (KEYER_STRAIGHT >= mode)) {
 	write_string_and_fill(KEYING_MODE_COL, KEYING_MODE_ROW, key_modestrings[mode], KEYING_MODE_WIDTH);
+    }
+}
+
+void display::prog_mode(bool is_in_prog_mode) {
+    if (is_in_prog_mode) {
+	write_string_and_fill(PROG_MODE_COL, PROG_MODE_ROW, prog_mode_string, PROG_MODE_WIDTH);
+    }
+    else {
+	write_string_and_fill(PROG_MODE_COL, PROG_MODE_ROW, "", PROG_MODE_WIDTH);
     }
 }
 

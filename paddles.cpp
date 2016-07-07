@@ -4,6 +4,7 @@
 #include "display.h"
 #include "morse_tables.h"
 #include "wpm.h"
+#include "config_manager.h"
 
 paddles *system_paddles = NULL;
 
@@ -106,7 +107,13 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 	    default:
 		if (KEY_UP == m_lastKeyerState) {
 		    if (0 != morse_decode_table[m_morseTableState].c) {
-			DISPLAY_MANAGER_SCROLLING_TEXT(morse_decode_table[m_morseTableState].c);
+			if (CONFIG_MANAGER_GET_PROGRAM_MODE()) {
+			    CONFIG_MANAGER_PROCESS_COMMAND(morse_decode_table[m_morseTableState].c);
+			    input_mode = m_paddleMode;
+			}
+			else {
+			    DISPLAY_MANAGER_SCROLLING_TEXT(morse_decode_table[m_morseTableState].c);
+			}
 		    }
 		    m_morseTableState = 0;
 		}

@@ -6,7 +6,7 @@
 
 config_manager *system_config_manager = NULL;
 
-config_manager::config_manager(void): m_paddlesMode(MODE_PADDLE_NORMAL)  {
+config_manager::config_manager(void): m_paddlesMode(MODE_PADDLE_NORMAL), m_isInProgramMode(false)  {
 }
 
 void config_manager::process_command(uint16_t command) {
@@ -22,6 +22,12 @@ void config_manager::process_command(uint16_t command) {
     default:
 	break;
     }
+}
+
+void config_manager::program_mode(bool is_in_program_mode) {
+    m_isInProgramMode = is_in_program_mode;
+    DISPLAY_MANAGER_PROG_MODE(m_isInProgramMode);
+    KEYING_PROGRAM_MODE(m_isInProgramMode);
 }
 
 

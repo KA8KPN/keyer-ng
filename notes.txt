@@ -103,7 +103,7 @@ in program mode and
  3Paddles Reverse
  4
 
-pWhen not in program mode.
+When not in program mode.
 
 I also want to show the serial number, when that feature is included.  I think
 I can put that on the 3rd row.  So, how about this?
@@ -141,7 +141,7 @@ DONE)  Set up a mechanism for including or eliminating specified features and op
 
 DONE)  Read the buttons as a feature
 
-Configuration changes through the paddles with a command button.  The first change will be reverse paddles and sidetone toggle
+DONE)  Configuration changes through the paddles with a command button.  The first change will be reverse paddles and sidetone toggle
 
 If I don't send anything for a while, and the last character is not a space,
 then the last character on the scrolling display should be a space.
