@@ -29,6 +29,7 @@ paddles::paddles(uint8_t right_paddle, uint8_t left_paddle) : m_leftPaddle(left_
     m_dahPaddle = m_rightPaddle;
     m_ditClosed = false;
     m_dahClosed = false;
+    m_addSpaceMs = 0;
 }
 
 
@@ -60,9 +61,6 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		    else if (m_ditClosed) {
 			m_keyerState = KEY_DIT;
 		    }
-		    else {
-			m_keyerState = KEY_UP;
-		    }
 		    break;
 
 		case KEY_DAH:
@@ -72,9 +70,6 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		    }
 		    else if (m_dahClosed) {
 			m_keyerState = KEY_DAH;
-		    }
-		    else {
-			m_keyerState = KEY_UP;
 		    }
 		    break;
 		}
@@ -91,6 +86,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		m_startReadingPaddlesMs = now + WPM_DOT_TWITCHES();
 		m_ditClosed = false;
 		m_dahClosed = false;
+		m_addSpaceMs = 0;
 		break;
 
 	    case KEY_DAH:
@@ -102,6 +98,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		m_startReadingPaddlesMs = now + WPM_DASH_TWITCHES();
 		m_ditClosed = false;
 		m_dahClosed = false;
+		m_addSpaceMs = 0;
 		break;
 
 	    default:
@@ -113,6 +110,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 			}
 			else {
 			    DISPLAY_MANAGER_SCROLLING_TEXT(morse_decode_table[m_morseTableState].c);
+			    m_addSpaceMs = now + WPM_DASH_TWITCHES();
 			}
 		    }
 		    m_morseTableState = 0;
@@ -124,6 +122,11 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		break;
 	    }
 	}
+    }
+
+    if ((0 < m_addSpaceMs) && (now >= m_addSpaceMs)) {
+	DISPLAY_MANAGER_SCROLLING_TEXT(' ');
+	m_addSpaceMs = 0;
     }
     return input_mode;
 }

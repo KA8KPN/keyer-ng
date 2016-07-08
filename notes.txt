@@ -143,8 +143,7 @@ DONE)  Read the buttons as a feature
 
 DONE)  Configuration changes through the paddles with a command button.  The first change will be reverse paddles and sidetone toggle
 
-If I don't send anything for a while, and the last character is not a space,
-then the last character on the scrolling display should be a space.
+DONE)  If I don't send anything for a while, and the last character is not a space, then the last character on the scrolling display should be a space.
 
 Allow the selection of multiple transmitter numbers.  Includes configuration updates and changes to the calls to display.
 
