@@ -6,7 +6,7 @@
 
 config_manager *system_config_manager = NULL;
 
-config_manager::config_manager(void): m_paddlesMode(MODE_PADDLE_NORMAL), m_isInProgramMode(false)  {
+config_manager::config_manager(void): m_paddlesMode(MODE_PADDLE_NORMAL), m_isInProgramMode(false), m_currentXmitter(1)  {
 }
 
 void config_manager::process_command(uint16_t command) {
@@ -17,6 +17,11 @@ void config_manager::process_command(uint16_t command) {
 
     case 'O':
 	TOGGLE_SIDETONE_ENABLE();
+	break;
+
+    case '0': case '1': case '2': case '3': case '4':
+	m_currentXmitter = command - '0';
+	KEYING_SELECT_TRANSMITTER(m_currentXmitter);
 	break;
 
     default:

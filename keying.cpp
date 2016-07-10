@@ -3,6 +3,7 @@
 #include "keying.h"
 #include "keyer.h"
 #include "display.h"
+#include "config_manager.h"
 
 keying::keying(void) {}
 keying::~keying(void) {}
@@ -130,7 +131,7 @@ transmitter::~transmitter(void) {
 }
 
 keying *system_transmitter = NULL;
-static keying *actual_transmitter = NULL;
+static keying *transmitters[5] = {NULL, NULL, NULL, NULL, NULL};
 
 
 class cpo : public keying {
@@ -153,14 +154,14 @@ cpo::cpo(int sidetone_freq) : keying() {
 }
 
 void cpo::set_sidetone_freq(int sidetone_freq) {
-    actual_transmitter->set_sidetone_freq(sidetone_freq);
+    transmitters[CONFIG_MANAGER_XMITTER()]->set_sidetone_freq(sidetone_freq);
     if (0 != sidetone_freq) {
 	m_sidetoneFreq = sidetone_freq;
     }
 }
 
 void cpo::toggle_sidetone_enable(void) {
-    actual_transmitter->toggle_sidetone_enable();
+    transmitters[CONFIG_MANAGER_XMITTER()]->toggle_sidetone_enable();
 }
 
 void cpo::key_up(void) {
@@ -173,23 +174,32 @@ void cpo::key_down(void) {
 
 cpo::~cpo() {}
 
-static keying *code_practice_oscillator = NULL;
-
 void keying_initialize(void) {
     pinMode(SIDETONE, OUTPUT);
     digitalWrite(SIDETONE, LOW);
 
-    actual_transmitter = new transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
-    code_practice_oscillator = new cpo(SIDETONE_FREQUENCY);
-    system_transmitter = actual_transmitter;
+    transmitters[0] = new cpo(SIDETONE_FREQUENCY);
+    transmitters[1] = new transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
+    transmitters[2] = new transmitter(PTT_2, KEY_OUT_2, SIDETONE_FREQUENCY);
+    transmitters[3] = new transmitter(PTT_3, KEY_OUT_3, SIDETONE_FREQUENCY);
+    transmitters[4] = new transmitter(PTT_4, KEY_OUT_4, SIDETONE_FREQUENCY);
+    system_transmitter = transmitters[1];
     DISPLAY_MANAGER_XMIT_MODE(1);
 }
 
 void keying_config_mode(boolean enter_config_mode) {
     if (enter_config_mode) {
-	system_transmitter = code_practice_oscillator;
+	system_transmitter = transmitters[0];
     }
     else {
-	system_transmitter = actual_transmitter;
+	system_transmitter = transmitters[CONFIG_MANAGER_XMITTER()];
+    }
+}
+
+
+void keying_select_transmitter(uint8_t xmitter) {
+    if (5 > xmitter) {
+	DISPLAY_MANAGER_XMIT_MODE(xmitter);
+	system_transmitter = transmitters[CONFIG_MANAGER_XMITTER()];
     }
 }

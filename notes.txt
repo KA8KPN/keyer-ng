@@ -145,7 +145,7 @@ DONE)  Configuration changes through the paddles with a command button.  The fir
 
 DONE)  If I don't send anything for a while, and the last character is not a space, then the last character on the scrolling display should be a space.
 
-Allow the selection of multiple transmitter numbers.  Includes configuration updates and changes to the calls to display.
+DONE)  Allow the selection of multiple transmitter numbers.  Includes configuration updates and changes to the calls to display.
 
 PTT Logic, including keyer start delay after PTT asserted.
 
@@ -163,3 +163,6 @@ Fix the configuration stuff through the PS/2 keyboard.  I'm not doing control ch
 
 Make runtime configurations persistent as a feature
 
+Add a serial number capability to the memorized messages.
+
+Use the backslash as an keyboard command escape key

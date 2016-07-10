@@ -18,15 +18,16 @@ public:
 
 void keying_initialize(void);
 void keying_config_mode(boolean enter_config_mode);
+void keying_select_transmitter(uint8_t xmitter);
 extern keying *system_transmitter;
 
-#define KEYING_INITIALIZE()       keying_initialize()
-#define TRANSMITTER_KEY_UP()      system_transmitter->key_up()
-#define TRANSMITTER_KEY_DOWN()    system_transmitter->key_down()
-#define TRANSMITTER_PTT_PUSH()    system_transmitter->ptt_push()
-#define TRANSMITTER_PTT_RELEASE() system_transmitter->ptt_release()
-#define SET_SIDETONE_FREQ(freq)   system_transmitter->set_sidetone_freq(freq)
-#define TOGGLE_SIDETONE_ENABLE()  system_transmitter->toggle_sidetone_enable()
-#define KEYING_PROGRAM_MODE(b)           keying_config_mode(b)
-
+#define KEYING_INITIALIZE()          keying_initialize()
+#define TRANSMITTER_KEY_UP()         system_transmitter->key_up()
+#define TRANSMITTER_KEY_DOWN()       system_transmitter->key_down()
+#define TRANSMITTER_PTT_PUSH()       system_transmitter->ptt_push()
+#define TRANSMITTER_PTT_RELEASE()    system_transmitter->ptt_release()
+#define SET_SIDETONE_FREQ(freq)      system_transmitter->set_sidetone_freq(freq)
+#define TOGGLE_SIDETONE_ENABLE()     system_transmitter->toggle_sidetone_enable()
+#define KEYING_PROGRAM_MODE(b)       keying_config_mode(b)
+#define KEYING_SELECT_TRANSMITTER(x) keying_select_transmitter(x)
 #endif // !defined KEYING_H

@@ -25,6 +25,13 @@ typedef enum keyer_mode {KEYER_IAMBIC_A, KEYER_IAMBIC_B, KEYER_ULTIMATIC, KEYER_
 
 #define PTT_1    13
 #define KEY_OUT_1 11
+#define PTT_2    0
+#define KEY_OUT_2 12
+#define PTT_3    0
+#define KEY_OUT_3 0
+#define PTT_4    0
+#define KEY_OUT_4 0
+
 #define SIDETONE 4
 #define SIDETONE_FREQUENCY 800
 
