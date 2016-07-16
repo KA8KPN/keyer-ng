@@ -25,7 +25,7 @@ typedef enum keyer_mode {KEYER_IAMBIC_A, KEYER_IAMBIC_B, KEYER_ULTIMATIC, KEYER_
 
 #define PTT_1    13
 #define KEY_OUT_1 11
-#define PTT_DELAY_1 250
+#define PTT_DELAY_1 10
 #define PTT_HANG_1 750
 #define PTT_2    0
 #define KEY_OUT_2 12
