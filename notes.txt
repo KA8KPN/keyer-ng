@@ -147,7 +147,7 @@ DONE)  If I don't send anything for a while, and the last character is not a spa
 
 DONE)  Allow the selection of multiple transmitter numbers.  Includes configuration updates and changes to the calls to display.
 
-PTT Logic, including keyer start delay after PTT asserted.
+DONE) PTT Logic, including keyer start delay after PTT asserted.
 
 DONE) Scrolling text as it is sent (although it could use some enhancement)
 

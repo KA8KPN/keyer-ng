@@ -41,6 +41,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 
     if (now >= m_nextStateTransitionMs) {
 	if ((MODE_PADDLE_NORMAL == input_mode) || (MODE_PADDLE_REVERSE == input_mode)) {
+	    unsigned ptt_delay;
 	    keyer_state_t tempKeyerState;
  
 	    tempKeyerState = m_keyerState;
@@ -81,9 +82,9 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		// TODO:  If it ever returns to the start state, it should indicate that there was a symbol
 		// TODO:  it did not decode.
 		m_morseTableState = morse_decode_table[m_morseTableState].links[0];
-		m_nextStateTransitionMs = now + WPM_DOT_TWITCHES();
-		TRANSMITTER_KEY_DOWN();
-		m_startReadingPaddlesMs = now + WPM_DOT_TWITCHES();
+		ptt_delay = TRANSMITTER_KEY_DOWN();
+		m_nextStateTransitionMs = now + WPM_DOT_TWITCHES() + ptt_delay;
+		m_startReadingPaddlesMs = now + WPM_DOT_TWITCHES() + ptt_delay;
 		m_ditClosed = false;
 		m_dahClosed = false;
 		m_addSpaceMs = 0;
@@ -93,9 +94,9 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		// TODO:  If it ever returns to the start state, it should indicate that there was a symbol
 		// TODO:  it did not decode.
 		m_morseTableState = morse_decode_table[m_morseTableState].links[1];
-		m_nextStateTransitionMs = now + WPM_DASH_TWITCHES();
-		TRANSMITTER_KEY_DOWN();
-		m_startReadingPaddlesMs = now + WPM_DASH_TWITCHES();
+		ptt_delay = TRANSMITTER_KEY_DOWN();
+		m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + ptt_delay;
+		m_startReadingPaddlesMs = now + WPM_DASH_TWITCHES() + ptt_delay;
 		m_ditClosed = false;
 		m_dahClosed = false;
 		m_addSpaceMs = 0;

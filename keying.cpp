@@ -10,16 +10,19 @@ keying::~keying(void) {}
 
 class transmitter : public keying {
 public:
-    transmitter(int ptt_line, int key_out_line, int sidetone_freq);
+    transmitter(int ptt_line, int key_out_line, int sidetone_freq, unsigned ptt_delay, unsigned ptt_hang);
     virtual void key_up(void);
-    virtual void key_down(void);
+    virtual unsigned key_down(void);
     virtual void ptt_push(void);
     virtual void ptt_release(void);
     virtual void set_sidetone_freq(int sidetone_freq);
     virtual void toggle_sidetone_enable(void);
+    virtual void update(unsigned long now);
     virtual ~transmitter(void);
 
 protected:
+    typedef enum { keying_idle, keying_ptt_wait, keying_key_down, keying_key_up } keyingState_t;
+    void key_down_actual(void);
     void set_ptt(int ptt_line);
     void set_key_out(int key_out_line);
     byte m_pttLine;
@@ -27,6 +30,10 @@ protected:
     int m_sidetoneFreq;
     void (*m_keyAction)(byte, byte);
     void (*m_pttAction)(byte, byte);
+    unsigned m_pttDelay;
+    unsigned m_pttHang;
+    keyingState_t m_state;
+    unsigned long m_nextStateChange;
 };
 
 
@@ -51,7 +58,7 @@ static void null_action(byte line, byte new_state) {
     (void) new_state;
 }
 
-transmitter::transmitter(int ptt_line, int key_out_line, int sidetone_freq) {
+transmitter::transmitter(int ptt_line, int key_out_line, int sidetone_freq, unsigned ptt_delay, unsigned ptt_hang) {
     m_keyAction = null_action;
     m_pttAction = null_action;
     take_sidetone_action = null_sidetone;
@@ -60,6 +67,10 @@ transmitter::transmitter(int ptt_line, int key_out_line, int sidetone_freq) {
     set_key_out(key_out_line);
     set_sidetone_freq(sidetone_freq);
     DISPLAY_MANAGER_SIDETONE(m_sidetoneFreq);
+    m_pttDelay = ptt_delay;
+    m_pttHang = ptt_hang;
+    m_state = keying_idle;
+    m_nextStateChange = 0;
 }
 
 void transmitter::set_ptt(int ptt_line) {
@@ -99,11 +110,33 @@ void transmitter::set_sidetone_freq(int sidetone_freq) {
 
 
 void transmitter::key_up(void) {
+    m_state = keying_key_up;
     m_keyAction(m_keyOutLine, LOW);
     take_sidetone_action(m_sidetoneFreq, false);
+    m_nextStateChange = millis() + m_pttHang;
 }
 
-void transmitter::key_down(void) {
+unsigned transmitter::key_down(void) {
+    unsigned result = 0;
+ 
+    // Key down may not actually key down.  If the PTT has already been triggered for longer than the delay time, then we key down.
+    // If a PTT delay has been specified and the system is not in transmit mode, then we trigger the
+    // ptt line, returning the delay and the update function will actually key the transmitter after
+    // the appropriate ptt delay
+    if (keying_idle == m_state) {
+	m_state = keying_ptt_wait;
+	ptt_push();
+	m_nextStateChange = millis() + m_pttDelay;
+	result = m_pttDelay;
+    }
+    else {
+	key_down_actual();
+    }
+    return result;
+}
+
+void transmitter::key_down_actual(void) {
+    m_state = keying_key_down;
     m_keyAction(m_keyOutLine, HIGH);
     take_sidetone_action(m_sidetoneFreq, true);
 }
@@ -113,7 +146,7 @@ void transmitter::ptt_push(void) {
 }
 
 void transmitter::ptt_release(void) {
-    m_pttAction(m_pttLine, HIGH);
+    m_pttAction(m_pttLine, LOW);
 }
 
 
@@ -123,6 +156,25 @@ void transmitter::toggle_sidetone_enable(void) {
     }
     else {
 	set_sidetone_freq(0);
+    }
+}
+
+
+void transmitter::update(unsigned long now) {
+    if (m_nextStateChange < now) {
+	switch(m_state) {
+	case keying_ptt_wait:
+	    key_down_actual();
+	    break;
+
+	case keying_key_up:
+	    ptt_release();
+	    m_state = keying_idle;
+	    break;
+
+	default:
+	    break;
+	}
     }
 }
 
@@ -140,9 +192,10 @@ public:
     virtual void set_sidetone_freq(int sidetone_freq);
     virtual void toggle_sidetone_enable(void);
     virtual void key_up(void);
-    virtual void key_down(void);
+    virtual unsigned key_down(void);
     virtual void ptt_push(void) {}
     virtual void ptt_release(void) {}
+    virtual void update(unsigned long now) {};
     virtual ~cpo(void);
 
 private:
@@ -168,8 +221,9 @@ void cpo::key_up(void) {
     noTone(SIDETONE);
 }
 
-void cpo::key_down(void) {
+unsigned cpo::key_down(void) {
     tone(SIDETONE, m_sidetoneFreq);
+    return 0;
 }
 
 cpo::~cpo() {}
@@ -179,10 +233,10 @@ void keying_initialize(void) {
     digitalWrite(SIDETONE, LOW);
 
     transmitters[0] = new cpo(SIDETONE_FREQUENCY);
-    transmitters[1] = new transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY);
-    transmitters[2] = new transmitter(PTT_2, KEY_OUT_2, SIDETONE_FREQUENCY);
-    transmitters[3] = new transmitter(PTT_3, KEY_OUT_3, SIDETONE_FREQUENCY);
-    transmitters[4] = new transmitter(PTT_4, KEY_OUT_4, SIDETONE_FREQUENCY);
+    transmitters[1] = new transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY, PTT_DELAY_1, PTT_HANG_1);
+    transmitters[2] = new transmitter(PTT_2, KEY_OUT_2, SIDETONE_FREQUENCY, PTT_DELAY_2, PTT_HANG_2);
+    transmitters[3] = new transmitter(PTT_3, KEY_OUT_3, SIDETONE_FREQUENCY, PTT_DELAY_3, PTT_HANG_3);
+    transmitters[4] = new transmitter(PTT_4, KEY_OUT_4, SIDETONE_FREQUENCY, PTT_DELAY_4, PTT_HANG_4);
     system_transmitter = transmitters[1];
     DISPLAY_MANAGER_XMIT_MODE(1);
 }
@@ -198,6 +252,7 @@ void keying_config_mode(boolean enter_config_mode) {
 
 
 void keying_select_transmitter(uint8_t xmitter) {
+    // need to both unkey and put current xmitter in receive mode
     if (5 > xmitter) {
 	DISPLAY_MANAGER_XMIT_MODE(xmitter);
 	system_transmitter = transmitters[CONFIG_MANAGER_XMITTER()];

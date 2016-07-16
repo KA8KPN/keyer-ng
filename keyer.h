@@ -25,12 +25,20 @@ typedef enum keyer_mode {KEYER_IAMBIC_A, KEYER_IAMBIC_B, KEYER_ULTIMATIC, KEYER_
 
 #define PTT_1    13
 #define KEY_OUT_1 11
+#define PTT_DELAY_1 250
+#define PTT_HANG_1 750
 #define PTT_2    0
 #define KEY_OUT_2 12
+#define PTT_DELAY_2 0
+#define PTT_HANG_2 0
 #define PTT_3    0
 #define KEY_OUT_3 0
+#define PTT_DELAY_3 0
+#define PTT_HANG_3 0
 #define PTT_4    0
 #define KEY_OUT_4 0
+#define PTT_DELAY_4 0
+#define PTT_HANG_4 0
 
 #define SIDETONE 4
 #define SIDETONE_FREQUENCY 800

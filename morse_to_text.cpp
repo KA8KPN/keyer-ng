@@ -27,15 +27,16 @@ morse_to_text::morse_to_text() {
 input_mode_t morse_to_text::update(unsigned long now, input_mode_t mode) {
     if (now >= m_nextStateTransitionMs) {
 	if (MODE_KEYBOARD == mode) {
+	    unsigned ptt_delay;
 	    if (KEY_UP == m_keyerState) {
-		TRANSMITTER_KEY_DOWN();
+		ptt_delay = TRANSMITTER_KEY_DOWN();
 		if (1 & m_kbdBit) {
 		    m_keyerState = KEY_DAH;
-		    m_nextStateTransitionMs = now + WPM_DASH_TWITCHES();
+		    m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + ptt_delay;
 		}
 		else {
 		    m_keyerState = KEY_DIT;
-		    m_nextStateTransitionMs = now + WPM_DOT_TWITCHES();
+		    m_nextStateTransitionMs = now + WPM_DOT_TWITCHES() + ptt_delay;
 		}
 	    }
 	    else {

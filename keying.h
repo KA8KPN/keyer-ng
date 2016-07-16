@@ -7,11 +7,12 @@ class keying {
 public:
     keying(void);
     virtual void key_up(void) = 0;
-    virtual void key_down(void) = 0;
+    virtual unsigned key_down(void) = 0;
     virtual void ptt_push(void) = 0;
     virtual void ptt_release(void) = 0;
     virtual void set_sidetone_freq(int sidetone_freq) = 0;
     virtual void toggle_sidetone_enable(void) = 0;
+    virtual void update(unsigned long now) = 0;
     virtual ~keying(void);
 };
 
@@ -30,4 +31,5 @@ extern keying *system_transmitter;
 #define TOGGLE_SIDETONE_ENABLE()     system_transmitter->toggle_sidetone_enable()
 #define KEYING_PROGRAM_MODE(b)       keying_config_mode(b)
 #define KEYING_SELECT_TRANSMITTER(x) keying_select_transmitter(x)
+#define KEYING_UPDATE(x)             system_transmitter->update(x)
 #endif // !defined KEYING_H

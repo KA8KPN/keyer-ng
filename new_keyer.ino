@@ -42,4 +42,5 @@ void loop() {
     BUTTONS_UPDATE();
     input_mode = MORSE_TO_TEXT_UPDATE(now, input_mode);
     WPM_UPDATE();
+    KEYING_UPDATE(now);
 }	
