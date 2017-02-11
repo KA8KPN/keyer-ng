@@ -4,7 +4,7 @@
 #include "display.h"
 #include "keying.h"
 
-config_manager *system_config_manager = NULL;
+config_manager system_config_manager;
 
 config_manager::config_manager(void): m_paddlesMode(MODE_PADDLE_NORMAL), m_isInProgramMode(false), m_currentXmitter(1)  {
 }
@@ -37,5 +37,4 @@ void config_manager::program_mode(bool is_in_program_mode) {
 
 
 void config_manager_initialize(void) {
-    system_config_manager = new config_manager();
 }

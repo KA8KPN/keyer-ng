@@ -9,10 +9,9 @@
 #include "config_manager.h"
 #include "display.h"
 
-morse_to_text *system_mtt = NULL;
+morse_to_text system_mtt;
 
 void morse_to_text_initialize(void) {
-    system_mtt = new morse_to_text();
 }
 
 morse_to_text::morse_to_text() {
@@ -76,14 +75,7 @@ input_mode_t morse_to_text::update(unsigned long now, input_mode_t mode) {
 	    }
 	    else if (0xe000 == (0xf000 & z)) {
 		CONFIG_MANAGER_PROCESS_COMMAND(0x0fff & z);
-		mode = CONFIG_MANAGER_PADDLES_MODE();
 	    }
-	    else {
-		mode = CONFIG_MANAGER_PADDLES_MODE();
-	    }
-	}
-	else {
-	    mode = CONFIG_MANAGER_PADDLES_MODE();
 	}
     }
     return mode;

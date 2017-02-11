@@ -21,13 +21,13 @@ private:
 };
 
 
-extern config_manager *system_config_manager;
+extern config_manager system_config_manager;
 void config_manager_initialize(void);
 #define CONFIG_MANAGER_INITIALIZE() config_manager_initialize()
-#define CONFIG_MANAGER_PROCESS_COMMAND(command) system_config_manager->process_command(command)
-#define CONFIG_MANAGER_PADDLES_MODE()  system_config_manager->paddles_mode()
-#define CONFIG_MANAGER_GET_PROGRAM_MODE()  system_config_manager->program_mode()
-#define CONFIG_MANAGER_SET_PROGRAM_MODE(b) system_config_manager->program_mode(b)
-#define CONFIG_MANAGER_XMITTER()           system_config_manager->xmitter()
+#define CONFIG_MANAGER_PROCESS_COMMAND(command) system_config_manager.process_command(command)
+#define CONFIG_MANAGER_PADDLES_MODE()  system_config_manager.paddles_mode()
+#define CONFIG_MANAGER_GET_PROGRAM_MODE()  system_config_manager.program_mode()
+#define CONFIG_MANAGER_SET_PROGRAM_MODE(b) system_config_manager.program_mode(b)
+#define CONFIG_MANAGER_XMITTER()           system_config_manager.xmitter()
 
 #endif // CONFIG_MANAGER_H_INCLUDED

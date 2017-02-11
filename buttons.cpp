@@ -7,6 +7,7 @@
 #include "buttons.h"
 #include "morse_to_text.h"
 #include "config_manager.h"
+#include "memories.h"
 
 buttons *system_buttons = NULL;
 
@@ -56,55 +57,9 @@ void buttons::update(void) {
                 CONFIG_MANAGER_SET_PROGRAM_MODE(!CONFIG_MANAGER_GET_PROGRAM_MODE());
 		break;
 
-	    case 1:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('1');
-		break;
-
-	    case 2:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('2');
-		break;
-
-	    case 3:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('3');
-		break;
-
-	    case 4:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('4');
-		break;
-
-	    case 5:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('5');
-		break;
-
-	    case 6:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('6');
-		break;
-
-	    case 7:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('7');
-		break;
-
-	    case 8:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('8');
-		break;
-
-	    case 9:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('9');
-		break;
-
-	    case 10:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('1');
-		MORSE_TO_TEXT_ADD_TO_BUFFER('0');
-		break;
-
-	    case 11:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('1');
-		MORSE_TO_TEXT_ADD_TO_BUFFER('1');
-		break;
-
-	    case 12:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('1');
-		MORSE_TO_TEXT_ADD_TO_BUFFER('2');
+	    case 1: case 2: case 3: case 4:  case 5:  case 6:
+	    case 7: case 8: case 9: case 10: case 11: case 12:
+		PLAY_MEMORY(button);
 		break;
 
 	    default:

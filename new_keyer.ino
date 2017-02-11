@@ -11,6 +11,7 @@
 #include "morse_to_text.h"
 #include "buttons.h"
 #include "config_manager.h"
+#include "memories.h"
 
 #include "keyer.h"
 
@@ -30,6 +31,7 @@ void setup () {
     SERIAL_INITIALIZE();
     PS2_KEYBOARD_INITIALIZE();
     BUTTONS_INITIALIZE();
+    MEMORIES_INITIALIZE();
     CONFIG_MANAGER_INITIALIZE();  // This needs to be after all the configurable options
 }
 
@@ -41,6 +43,7 @@ void loop() {
     PS2_KEYBOARD_UPDATE();
     BUTTONS_UPDATE();
     input_mode = MORSE_TO_TEXT_UPDATE(now, input_mode);
+    input_mode = MEMORIES_UPDATE(now, input_mode);
     WPM_UPDATE();
     KEYING_UPDATE(now);
 }	

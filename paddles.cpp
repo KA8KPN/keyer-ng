@@ -6,12 +6,11 @@
 #include "wpm.h"
 #include "config_manager.h"
 
-paddles *system_paddles = NULL;
+paddles system_paddles;
 
 void paddles_initialize(byte right_paddle, byte left_paddle)
 {
-    system_paddles = new paddles(right_paddle, left_paddle);
-
+    system_paddles.set_paddle_ports(right_paddle, left_paddle);
     pinMode(left_paddle, INPUT);
     digitalWrite(left_paddle, HIGH);
     pinMode(right_paddle, INPUT);
@@ -19,7 +18,7 @@ void paddles_initialize(byte right_paddle, byte left_paddle)
     DISPLAY_MANAGER_KEY_MODE(KEYER_IAMBIC_A);
 }
 
-paddles::paddles(uint8_t right_paddle, uint8_t left_paddle) : m_leftPaddle(left_paddle), m_rightPaddle(right_paddle), m_paddleMode(MODE_PADDLE_NORMAL) {
+paddles::paddles(void) : m_leftPaddle(0), m_rightPaddle(0), m_paddleMode(MODE_PADDLE_NORMAL) {
     m_nextStateTransitionMs = 100 + millis();
     m_startReadingPaddlesMs = 0;
     m_keyerState = KEY_UP;
@@ -32,6 +31,11 @@ paddles::paddles(uint8_t right_paddle, uint8_t left_paddle) : m_leftPaddle(left_
     m_addSpaceMs = 0;
 }
 
+
+void paddles::set_paddle_ports(byte right_paddle, byte left_paddle) {
+    m_leftPaddle = left_paddle;
+    m_rightPaddle = right_paddle;
+}
 
 input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
     if (now >= m_startReadingPaddlesMs) {

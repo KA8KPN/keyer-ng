@@ -124,6 +124,31 @@ Ctrl-N toggles the paddle reverse.  The K3NG software also does \n and CommandMo
 
 
 --------------------------------------------------
+Okay, memories.  How do I program memories?
+
+Well, the K3NG software uses SHIFT-F1, SHIFT-F2, etc to program memory 1, memory 2, and so forth
+
+It also says that (through a serial connection, and I presume the PS/2 keyboard) you can program memories by doing \p1, \p2, ... \p<n> where "<n>" is the number of memories (12, in my case)
+
+It also says that, in command mode, you can send (through the paddles) P and then one or two digits to program the memory encoded in the digits.  I presume that a single-digit number would have a timeout, or one can use a leading 0.  (I guess.  It doesn't actually say anywhere and I don't feel like digging through the source to figure it out.)
+
+So, I should be able to "p" and either a two-digit number (or a single digit number that times out after a while) to program the memory of the number.
+
+How do I play memories?  Well, \# (or I presume \##) plays the memory encoded by the digit through the serial port.  Pressing the button in normal mode will play the memory, pressing the button in program mode will play the memory through the speaker, but won't key the radio.  Through the PS/2 keyboard, F1, F2, F3, and so forth plays memory 1, 2, 3, and so forth.
+
+Okay, that should be enough to get started.
+
+Of course, how long is the timeout?  I don't think I want to tie it to the speed of the morse.  Let's use one second.
+
+Also, should I eventually have tones indicating things like entering and exiting program mode and when we're programming a memory.
+
+Also, when I'm programming the memory, I should put "Memory" and the memory number into the "transmitter" field, as visual feedback for what is going on.  For the small display, it will be just "M" and the number.  No leading zeroes, and a space after if needed.
+
+So, how will the memories work?  Well, Each byte will be divided into two fields.  The most significan two bits will indicate what sort of byte it is, and the bottom six bits will encode a number.  The most significant two bits will be "00" for end of memory, "01" for "memory macro" (currently not supported), "11" for key down, and "10" for key up.  For end of memory, the bottom six bits will have no meaning until I think of something that it might be useful for.  For the memory macro, it will eventually encode which macro is meant.  For key up and key down, the number will be tenths of a dot time.
+
+Actually, I think I want to first set up the playback of memories with some canned memories, and then work on the programming.  So, let's begin...
+
+--------------------------------------------------
 TODO:
 DONE)  Split the paddle logic out of the main function.
 
@@ -155,7 +180,9 @@ DONE) Morse through the serial port (although it could use some enhancement)
 
 DONE) I'm having trouble sending KN, figure out why and fix it.  (I modified the paddle scan timing.)
 
-Allow for the programming and playing back of memories.
+Allow for the programming and playing back of memories.  Make sure that the display shows the memory number.  Also, the morse-to-text should put the text out as it is sent.
+
+Add some audio cues for operating without a display.  (Enter program mode, exit program mode, start programming the memory, memory programmed, error condition.  There may be others.)
 
 Figure out how to better do the morse tables so that there aren't remnants hanging around if they aren't needed
 
