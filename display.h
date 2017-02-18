@@ -28,23 +28,23 @@ private:
 
 extern display *system_display_manager;
 void display_manager_initialize(void);
-#define DISPLAY_MANAGER_INITIALIZE()         display_manager_initialize()
-#define DISPLAY_MANAGER_KEY_MODE(mode)       system_display_manager->key_mode(mode)
-#define DISPLAY_MANAGER_WPM(wpm)             system_display_manager->wpm(wpm)
-#define DISPLAY_MANAGER_XMIT_MODE(xmitter)   system_display_manager->xmit_mode(xmitter)
+#define DISPLAY_MANAGER_INITIALIZE()            display_manager_initialize()
+#define DISPLAY_MANAGER_KEY_MODE(mode)          system_display_manager->key_mode(mode)
+#define DISPLAY_MANAGER_WPM(wpm)                system_display_manager->wpm(wpm)
+#define DISPLAY_MANAGER_XMIT_MODE(xmitter)      system_display_manager->xmit_mode(xmitter)
 #define DISPLAY_MANAGER_INPUT_SOURCE(source, w) system_display_manager->input_source(source, w)
-#define DISPLAY_MANAGER_SCROLLING_TEXT(c)    system_display_manager->scrolling_text(c)
-#define DISPLAY_MANAGER_SIDETONE(freq)       system_display_manager->sidetone(freq)
-#define DISPLAY_MANAGER_PROG_MODE(b)         system_display_manager->prog_mode(b)
+#define DISPLAY_MANAGER_SCROLLING_TEXT(c)       system_display_manager->scrolling_text(c)
+#define DISPLAY_MANAGER_SIDETONE(freq)          system_display_manager->sidetone(freq)
+#define DISPLAY_MANAGER_PROG_MODE(b)            system_display_manager->prog_mode(b)
 #else // !LCD_DISPLAY
 #define DISPLAY_MANAGER_INITIALIZE()
-#define DISPLAY_MANAGER_KEY_MODE(mode)       ((void)mode)
-#define DISPLAY_MANAGER_WPM(wpm)             ((void)wpm)
-#define DISPLAY_MANAGER_XMIT_MODE(xmitter)   ((void)xmitter)
-#define DISPLAY_MANAGER_INPUT_SOURCE(source) ((void)source)
-#define DISPLAY_MANAGER_SCROLLING_TEXT(c)    ((void)c)
-#define DISPLAY_MANAGER_SIDETONE(freq)       ((void)freq)
-#define DISPLAY_MANAGER_PROG_MODE(b)         ((void)b)
+#define DISPLAY_MANAGER_KEY_MODE(mode)          ((void)mode)
+#define DISPLAY_MANAGER_WPM(wpm)                ((void)wpm)
+#define DISPLAY_MANAGER_XMIT_MODE(xmitter)      ((void)xmitter)
+#define DISPLAY_MANAGER_INPUT_SOURCE(source, w) ((void)source,w)
+#define DISPLAY_MANAGER_SCROLLING_TEXT(c)       ((void)c)
+#define DISPLAY_MANAGER_SIDETONE(freq)          ((void)freq)
+#define DISPLAY_MANAGER_PROG_MODE(b)            ((void)b)
 
 #endif // LCD_DISPLAY
 

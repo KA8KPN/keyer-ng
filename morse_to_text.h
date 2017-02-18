@@ -22,7 +22,7 @@ void morse_to_text_initialize(void);
 #define MORSE_TO_TEXT_UPDATE(s)         system_mtt.update(s)
 #else // !FEATURE_MORSE_TO_TEXT
 #define MORSE_TO_TEXT_INITIALIZE()
-#define MORSE_TO_TEXT_UPDATE(now, mode) (mode)
+#define MORSE_TO_TEXT_UPDATE(s)         ((void)s)
 #endif // !FEATURE_MORSE_TO_TEXT
 
 #endif // MORSE_TO_TEXT_H_INCLUDED
