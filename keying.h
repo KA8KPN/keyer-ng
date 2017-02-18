@@ -29,7 +29,7 @@ extern keying *system_transmitter;
 #define TRANSMITTER_PTT_RELEASE()    system_transmitter->ptt_release()
 #define SET_SIDETONE_FREQ(freq)      system_transmitter->set_sidetone_freq(freq)
 #define TOGGLE_SIDETONE_ENABLE()     system_transmitter->toggle_sidetone_enable()
-#define KEYING_PROGRAM_MODE(b)       keying_config_mode(b)
+#define KEYING_COMMAND_MODE(b)       keying_config_mode(b)
 #define KEYING_SELECT_TRANSMITTER(x) keying_select_transmitter(x)
 #define KEYING_UPDATE(x)             system_transmitter->update(x)
 #endif // !defined KEYING_H

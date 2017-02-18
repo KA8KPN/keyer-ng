@@ -110,9 +110,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		if (KEY_UP == m_lastKeyerState) {
 		    MORSE_TO_TEXT_UPDATE(CharSpace);
 		    input_mode = m_paddleMode;
-		    if (!CONFIG_MANAGER_GET_PROGRAM_MODE()) {
-			m_addSpaceMs = now + WPM_DASH_TWITCHES();
-		    }
+		    m_addSpaceMs = now + WPM_DASH_TWITCHES();
 		}
 		else {
 		    TRANSMITTER_KEY_UP();

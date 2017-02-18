@@ -54,7 +54,7 @@ void buttons::update(void) {
 	    m_oldButton = button;
 	    switch(button) {
 	    case 0:
-                CONFIG_MANAGER_SET_PROGRAM_MODE(!CONFIG_MANAGER_GET_PROGRAM_MODE());
+                CONFIG_MANAGER_SET_COMMAND_MODE(!CONFIG_MANAGER_GET_COMMAND_MODE());
 		break;
 
 	    case 1: case 2: case 3: case 4:  case 5:  case 6:

@@ -148,6 +148,36 @@ So, how will the memories work?  Well, Each byte will be divided into two fields
 
 Actually, I think I want to first set up the playback of memories with some canned memories, and then work on the programming.  So, let's begin...
 
+...Okay, that works.
+
+Now, to program the memory.  In the original firmware, to program a memory through the paddles, you pushed the command button and then sent a "P" followed by either one or two digits.  The digits set the mode.  It would then record the memory until you pushed the command mode button again.  I should also figure out how to display something to indicate it's recording a memory.
+
+--------------------------------------------------
+What Works:
+Sidetone Speaker
+Speed Control
+I2C interface
+Memory Buttons
+
+What Doesn't Work:
+Key Input
+
+What is unknown:
+PTT 1
+Key Out 1
+Key Out 2
+PS/2 Keyboard
+
+Key Out 1:  11
+PTT 1: 13
+Key Out 2:  12
+Paddle Left:  5
+Paddle Right: 2
+Speaker:  4
+PS/2 Keyboard Clock:  3
+PS/2 Keyboard Data In:  A3
+
+
 --------------------------------------------------
 TODO:
 DONE)  Split the paddle logic out of the main function.
