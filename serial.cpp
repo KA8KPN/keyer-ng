@@ -5,7 +5,7 @@
 #include "Arduino.h"
 
 #include "serial.h"
-#include "morse_to_text.h"
+#include "text_to_morse.h"
 
 serial *system_serial = NULL;
 
@@ -23,7 +23,7 @@ serial::serial(bool echo) : m_echoChars(echo) {
 }
 
 void serial::update(void) {
-    if (MORSE_TO_TEXT_BUFFER_NOT_FULL()) {
+    if (TEXT_TO_MORSE_BUFFER_NOT_FULL()) {
 	if (Serial.available()) {
 	    char c;
 
@@ -34,7 +34,7 @@ void serial::update(void) {
 		    Serial.write('\n');
 		}
 	    }
-	    MORSE_TO_TEXT_ADD_TO_BUFFER(c);
+	    TEXT_TO_MORSE_ADD_TO_BUFFER(c);
 	}
     }
 }

@@ -17,7 +17,6 @@ private:
 
     unsigned long m_nextStateTransitionMs;
     unsigned long m_startReadingPaddlesMs;
-    uint8_t m_morseTableState;
     uint8_t m_leftPaddle, m_rightPaddle;
     uint8_t m_ditPaddle, m_dahPaddle;
     bool m_ditClosed, m_dahClosed;

@@ -8,7 +8,7 @@
 #include "paddles.h"
 #include "serial.h"
 #include "ps2_keyboard.h"
-#include "morse_to_text.h"
+#include "text_to_morse.h"
 #include "buttons.h"
 #include "config_manager.h"
 #include "memories.h"
@@ -25,7 +25,7 @@ void setup () {
 
     DISPLAY_MANAGER_INITIALIZE();  // This needs to be first because the other options may write to it
     WPM_INITIALIZE();
-    MORSE_TO_TEXT_INITIALIZE();
+    TEXT_TO_MORSE_INITIALIZE();
     KEYING_INITIALIZE();
     PADDLES_INITIALIZE(RIGHT_PADDLE, LEFT_PADDLE);
     SERIAL_INITIALIZE();
@@ -42,7 +42,7 @@ void loop() {
     SERIAL_UPDATE();
     PS2_KEYBOARD_UPDATE();
     BUTTONS_UPDATE();
-    input_mode = MORSE_TO_TEXT_UPDATE(now, input_mode);
+    input_mode = TEXT_TO_MORSE_UPDATE(now, input_mode);
     input_mode = MEMORIES_UPDATE(now, input_mode);
     WPM_UPDATE();
     KEYING_UPDATE(now);

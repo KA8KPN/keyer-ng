@@ -19,12 +19,12 @@ ps2_keyboard::ps2_keyboard(void) {
 }
 
 void ps2_keyboard::update(void) {
-    if (MORSE_TO_TEXT_BUFFER_NOT_FULL()) {
+    if (TEXT_TO_MORSE_BUFFER_NOT_FULL()) {
 	if (keyboard.available()) {
 	    char c;
 
 	    c = keyboard.read();
-	    MORSE_TO_TEXT_ADD_TO_BUFFER(c);
+	    TEXT_TO_MORSE_ADD_TO_BUFFER(c);
 	}
     }
 }

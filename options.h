@@ -14,10 +14,11 @@
 
 #if defined(DISPLAY_LARGE) || defined(DISPLAY_SMALL)
 #define LCD_DISPLAY
+#define FEATURE_MORSE_TO_TEXT
 #endif // DISPLAY_LARGE .or. DISPLAY_SMALL
 
 #if defined(FEATURE_SERIAL_INPUT) || defined(FEATURE_PS2_KEYBOARD)
-#define FEATURE_MORSE_TO_TEXT
+#define FEATURE_TEXT_TO_MORSE
 #endif
 
 #endif // OPTIONS_H_INCLUDED

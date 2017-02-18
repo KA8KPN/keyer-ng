@@ -7,6 +7,7 @@
 #include "memories.h"
 #include "wpm.h"
 #include "display.h"
+#include "morse_to_text.h"
 
 memories *system_memories = NULL;
 
@@ -200,12 +201,26 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 	case 2:
 	    m_nextByteTime = now + WPM_TWITCHES() * (0x3f & s_memories[m_mptr]);
 	    TRANSMITTER_KEY_UP();
+	    if (15 < (0x3f & s_memories[m_mptr])) {
+		if (35 < (0x3f & s_memories[m_mptr])) {
+		    MORSE_TO_TEXT_UPDATE(WordSpace);
+		}
+		else {
+		    MORSE_TO_TEXT_UPDATE(CharSpace);
+		}
+	    }
 	    m_mptr++;
 	    break;
 
 	case 3:
 	    m_nextByteTime = now + WPM_TWITCHES() * (0x3f & s_memories[m_mptr]);
 	    TRANSMITTER_KEY_DOWN();
+	    if (15 < (0x3f & s_memories[m_mptr])) {
+		MORSE_TO_TEXT_UPDATE(Dah);
+	    }
+	    else {
+		MORSE_TO_TEXT_UPDATE(Dit);
+	    }
 	    m_mptr++;
 	    break;
 
@@ -213,6 +228,7 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 	    mode = CONFIG_MANAGER_PADDLES_MODE();
 	    DISPLAY_MANAGER_INPUT_SOURCE(mode);
 	    m_mptr = -1;
+	    MORSE_TO_TEXT_UPDATE(WordSpace);
 	    break;
 	}
     }

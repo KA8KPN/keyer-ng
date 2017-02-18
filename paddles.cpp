@@ -5,6 +5,7 @@
 #include "morse_tables.h"
 #include "wpm.h"
 #include "config_manager.h"
+#include "morse_to_text.h"
 
 paddles system_paddles;
 
@@ -23,7 +24,6 @@ paddles::paddles(void) : m_leftPaddle(0), m_rightPaddle(0), m_paddleMode(MODE_PA
     m_startReadingPaddlesMs = 0;
     m_keyerState = KEY_UP;
     m_lastKeyerState = KEY_UP;
-    m_morseTableState = 0;
     m_ditPaddle = m_leftPaddle;
     m_dahPaddle = m_rightPaddle;
     m_ditClosed = false;
@@ -85,7 +85,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 	    case KEY_DIT:
 		// TODO:  If it ever returns to the start state, it should indicate that there was a symbol
 		// TODO:  it did not decode.
-		m_morseTableState = morse_decode_table[m_morseTableState].links[0];
+		MORSE_TO_TEXT_UPDATE(Dit);
 		ptt_delay = TRANSMITTER_KEY_DOWN();
 		m_nextStateTransitionMs = now + WPM_DOT_TWITCHES() + ptt_delay;
 		m_startReadingPaddlesMs = now + WPM_DOT_TWITCHES() + ptt_delay;
@@ -97,7 +97,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 	    case KEY_DAH:
 		// TODO:  If it ever returns to the start state, it should indicate that there was a symbol
 		// TODO:  it did not decode.
-		m_morseTableState = morse_decode_table[m_morseTableState].links[1];
+		MORSE_TO_TEXT_UPDATE(Dah);
 		ptt_delay = TRANSMITTER_KEY_DOWN();
 		m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + ptt_delay;
 		m_startReadingPaddlesMs = now + WPM_DASH_TWITCHES() + ptt_delay;
@@ -108,17 +108,11 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 
 	    default:
 		if (KEY_UP == m_lastKeyerState) {
-		    if (0 != morse_decode_table[m_morseTableState].c) {
-			if (CONFIG_MANAGER_GET_PROGRAM_MODE()) {
-			    CONFIG_MANAGER_PROCESS_COMMAND(morse_decode_table[m_morseTableState].c);
-			    input_mode = m_paddleMode;
-			}
-			else {
-			    DISPLAY_MANAGER_SCROLLING_TEXT(morse_decode_table[m_morseTableState].c);
-			    m_addSpaceMs = now + WPM_DASH_TWITCHES();
-			}
+		    MORSE_TO_TEXT_UPDATE(CharSpace);
+		    input_mode = m_paddleMode;
+		    if (!CONFIG_MANAGER_GET_PROGRAM_MODE()) {
+			m_addSpaceMs = now + WPM_DASH_TWITCHES();
 		    }
-		    m_morseTableState = 0;
 		}
 		else {
 		    TRANSMITTER_KEY_UP();
@@ -130,8 +124,8 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
     }
 
     if ((0 < m_addSpaceMs) && (now >= m_addSpaceMs)) {
-	DISPLAY_MANAGER_SCROLLING_TEXT(' ');
 	m_addSpaceMs = 0;
+	MORSE_TO_TEXT_UPDATE(WordSpace);
     }
     return input_mode;
 }

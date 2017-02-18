@@ -9,7 +9,7 @@
 #include "keying.h"
 #include "display.h"
 #include "wpm.h"
-#include "morse_to_text.h"
+#include "text_to_morse.h"
 #include "PS2Keyboard.h"
 
 class ps2_keyboard {

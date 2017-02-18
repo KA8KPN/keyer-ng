@@ -5,7 +5,7 @@
 #include <Arduino.h>
 
 #include "buttons.h"
-#include "morse_to_text.h"
+#include "text_to_morse.h"
 #include "config_manager.h"
 #include "memories.h"
 
@@ -63,7 +63,7 @@ void buttons::update(void) {
 		break;
 
 	    default:
-		MORSE_TO_TEXT_ADD_TO_BUFFER('?');
+		TEXT_TO_MORSE_ADD_TO_BUFFER('?');
 		break;
 	    }
         }
