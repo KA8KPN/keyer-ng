@@ -15,7 +15,7 @@ public:
     void key_mode(keyer_mode_t mode);
     void wpm(int wpm);
     void xmit_mode(int xmitter);
-    void input_source(input_mode_t mode);
+    void input_source(input_mode_t mode, uint8_t which);
     void scrolling_text(char c);
     void sidetone(int freq);
     void prog_mode(bool is_in_prog_mode);
@@ -32,7 +32,7 @@ void display_manager_initialize(void);
 #define DISPLAY_MANAGER_KEY_MODE(mode)       system_display_manager->key_mode(mode)
 #define DISPLAY_MANAGER_WPM(wpm)             system_display_manager->wpm(wpm)
 #define DISPLAY_MANAGER_XMIT_MODE(xmitter)   system_display_manager->xmit_mode(xmitter)
-#define DISPLAY_MANAGER_INPUT_SOURCE(source) system_display_manager->input_source(source)
+#define DISPLAY_MANAGER_INPUT_SOURCE(source, w) system_display_manager->input_source(source, w)
 #define DISPLAY_MANAGER_SCROLLING_TEXT(c)    system_display_manager->scrolling_text(c)
 #define DISPLAY_MANAGER_SIDETONE(freq)       system_display_manager->sidetone(freq)
 #define DISPLAY_MANAGER_PROG_MODE(b)         system_display_manager->prog_mode(b)

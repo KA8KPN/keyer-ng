@@ -109,7 +109,7 @@ static String input_strings[] = {
     "Norm Paddle",
     "Rev Paddle ",
     "Keyboard   ",
-    "Memory ##  "
+    "Memory     "
 };
 #else // !defined(DISPLAY_LARGE)
 static String input_strings[] = {
@@ -129,7 +129,7 @@ void display_manager_initialize(void) {
     system_display_manager = new display();
     system_display_manager->init();
 
-    system_display_manager->input_source(CONFIG_MANAGER_PADDLES_MODE());
+    system_display_manager->input_source(CONFIG_MANAGER_PADDLES_MODE(), 0);
 }
 
 display::display(void) {
@@ -195,9 +195,17 @@ void display::xmit_mode(int xmitter) {
 }
 
 
-void display::input_source(input_mode_t mode) {
+void display::input_source(input_mode_t mode, uint8_t which) {
     if ((mode >= 0) && (mode <= MODE_MEMORY)) {
 	write_string_and_fill(INPUT_COL, INPUT_ROW, input_strings[mode], INPUT_WIDTH);
+    }
+    if (mode == MODE_MEMORY) {
+	if (INPUT_WIDTH > 4) {
+	    char buffer[3];
+	    snprintf(buffer, 3, "%2d", which);
+	    m_display->setCursor(INPUT_COL+7, INPUT_ROW);
+	    m_display->write((const uint8_t *)buffer, 2);
+	}
     }
 }
 

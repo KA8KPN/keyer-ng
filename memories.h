@@ -22,6 +22,7 @@ public:
 private:
     uint16_t m_index[12];
     int16_t m_mptr;
+    uint8_t m_memory;
     unsigned long m_nextByteTime;
 };
 

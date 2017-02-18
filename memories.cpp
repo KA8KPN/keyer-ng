@@ -185,6 +185,7 @@ memories::memories(int n) {
 
 void memories::play_memory(uint8_t m) {
     if ((0 < m) && (MAX_MEMORIES >= m)) {
+	m_memory = m;
 	m_mptr = m_index[m-1];
     }
 }
@@ -193,7 +194,7 @@ void memories::play_memory(uint8_t m) {
 input_mode_t memories::update(unsigned long now, input_mode_t mode) {
     if ((MODE_MEMORY != mode) && (-1 < m_mptr)) {
 	mode = MODE_MEMORY;
-	DISPLAY_MANAGER_INPUT_SOURCE(mode);
+	DISPLAY_MANAGER_INPUT_SOURCE(mode, m_memory);
 	m_nextByteTime = now-1;
     }
     if ((MODE_MEMORY == mode) && (m_nextByteTime < now)) {
@@ -226,7 +227,7 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 
 	default:
 	    mode = CONFIG_MANAGER_PADDLES_MODE();
-	    DISPLAY_MANAGER_INPUT_SOURCE(mode);
+	    DISPLAY_MANAGER_INPUT_SOURCE(mode, 0);
 	    m_mptr = -1;
 	    MORSE_TO_TEXT_UPDATE(WordSpace);
 	    break;

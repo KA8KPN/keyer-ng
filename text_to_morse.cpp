@@ -60,7 +60,7 @@ input_mode_t text_to_morse::update(unsigned long now, input_mode_t mode) {
 	if (z) {
 	    if (0xd000 == z) {
 		mode = MODE_KEYBOARD;
-		DISPLAY_MANAGER_INPUT_SOURCE(mode);
+		DISPLAY_MANAGER_INPUT_SOURCE(mode, 0);
 		m_keyerState = KEY_DAH;
 		m_kbdCount = 1;
 		m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + WPM_DOT_TWITCHES();
@@ -68,7 +68,7 @@ input_mode_t text_to_morse::update(unsigned long now, input_mode_t mode) {
 	    }
 	    else if (0xd000 > z) {
 		mode = MODE_KEYBOARD;
-		DISPLAY_MANAGER_INPUT_SOURCE(mode);
+		DISPLAY_MANAGER_INPUT_SOURCE(mode, 0);
 		m_kbdCount = z >> 12;
 		m_kbdBit = z & 0x0fff;
 		DISPLAY_MANAGER_SCROLLING_TEXT(c);

@@ -49,7 +49,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 	    keyer_state_t tempKeyerState;
  
 	    tempKeyerState = m_keyerState;
-	    DISPLAY_MANAGER_INPUT_SOURCE(input_mode);
+	    DISPLAY_MANAGER_INPUT_SOURCE(input_mode, 0);
 	    switch(m_keyerState) {
 	    case KEY_DIT:
 	    case KEY_DAH:
