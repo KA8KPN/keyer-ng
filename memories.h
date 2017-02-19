@@ -18,6 +18,9 @@ public:
     memories(int number_of_memories);
     input_mode_t update(unsigned long now, input_mode_t mode);
     void play_memory(uint8_t which_memory_to_play);
+    // Memory is between 1 and the maximum number of memories, inclusive
+    // record_memory(0) means stop recording
+    void record_memory(uint8_t which_memory_to_record);
 
 private:
     uint16_t m_index[12];
@@ -31,10 +34,12 @@ extern memories *system_memories;
 #define MEMORIES_INITIALIZE() memories_initialize();
 #define MEMORIES_UPDATE(now, keyer_mode)     system_memories->update(now, keyer_mode);
 #define PLAY_MEMORY(n)        system_memories->play_memory(n);
+#define RECORD_MEMORY(n)      system_memories->record_memory(n);
 #else // ! FEATURE_MEMORIES
 #define MEMORIES_INITIALIZE()
 #define MEMORIES_UPDATE(now, keyer_mode) CONFIG_MANAGER_PADDLES_MODE()
 #define PLAY_MEMORY(n)        ((void) n)
+#define RECORD_MEMORY(n)        ((void) n)
 #endif // ! FEATURE_MEMORIES
 
 #endif // MEMORIES_H_INCLUDED

@@ -9,7 +9,7 @@
 class config_manager {
 public:
     config_manager(void);
-    void process_command(uint16_t command);
+    void process_command(const char *command);
     input_mode_t paddles_mode(void) const { return m_paddlesMode; }
     bool command_mode(void) const { return m_isInCommandMode; }
     void command_mode(bool is_in_command_mode);

@@ -14,6 +14,8 @@ public:
 
 private:
     uint8_t m_state;
+    char m_commandBuffer[4];
+    uint8_t m_buffPtr;
 };
 
 extern morse_to_text system_mtt;

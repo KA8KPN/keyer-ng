@@ -191,6 +191,10 @@ void memories::play_memory(uint8_t m) {
 }
 
 
+void memories::record_memory(uint8_t m) {
+}
+
+
 input_mode_t memories::update(unsigned long now, input_mode_t mode) {
     if ((MODE_MEMORY != mode) && (-1 < m_mptr)) {
 	mode = MODE_MEMORY;

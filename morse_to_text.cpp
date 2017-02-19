@@ -16,6 +16,8 @@ void morse_to_text_initialize(void) {
 
 morse_to_text::morse_to_text() {
     m_state = 0;
+    m_commandBuffer[0] = '\0';
+    m_buffPtr = 0;
 }
 
 /*
@@ -38,21 +40,36 @@ void morse_to_text::update(mtt_symbol s) {
     case CharSpace:
 	if (0 != morse_decode_table[m_state].c) {
 	    DISPLAY_MANAGER_SCROLLING_TEXT(morse_decode_table[m_state].c);
+	    if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
+		if (m_buffPtr > 1) {
+		    m_commandBuffer[0] = m_commandBuffer[1];
+		    m_commandBuffer[1] = m_commandBuffer[2];
+		    m_commandBuffer[2] = morse_decode_table[m_state].c;
+		}
+		else {
+		    m_commandBuffer[m_buffPtr++] = morse_decode_table[m_state].c;
+		}
+		m_commandBuffer[m_buffPtr+1] = '\0';
+	    }
 	}
 	m_state = 0;
 	break;
 
     case WordSpace:
 	if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
-	    CONFIG_MANAGER_PROCESS_COMMAND(morse_decode_table[m_state].c);
+	    CONFIG_MANAGER_PROCESS_COMMAND(m_commandBuffer);
+	    m_buffPtr = 0;
+	    m_commandBuffer[0] = '\0';
 	}
 	else {
 	    DISPLAY_MANAGER_SCROLLING_TEXT(' ');
 	}
+	m_state = 0;
 	break;
 
     default:
 	m_state = 0;
+	break;
     }
 }
 

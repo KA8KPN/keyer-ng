@@ -24,8 +24,6 @@ paddles::paddles(void) : m_leftPaddle(0), m_rightPaddle(0), m_paddleMode(MODE_PA
     m_startReadingPaddlesMs = 0;
     m_keyerState = KEY_UP;
     m_lastKeyerState = KEY_UP;
-    m_ditPaddle = m_leftPaddle;
-    m_dahPaddle = m_rightPaddle;
     m_ditClosed = false;
     m_dahClosed = false;
     m_addSpaceMs = 0;
@@ -35,6 +33,8 @@ paddles::paddles(void) : m_leftPaddle(0), m_rightPaddle(0), m_paddleMode(MODE_PA
 void paddles::set_paddle_ports(byte right_paddle, byte left_paddle) {
     m_leftPaddle = left_paddle;
     m_rightPaddle = right_paddle;
+    m_ditPaddle = m_leftPaddle;
+    m_dahPaddle = m_rightPaddle;
 }
 
 input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
