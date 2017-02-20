@@ -19,6 +19,10 @@ public:
 
 void keying_initialize(void);
 void keying_config_mode(boolean enter_config_mode);
+#if defined(FEATURE_MEMORIES)
+void keying_record_mode(boolean enter_record_mode);
+#define KEYING_RECORD_MODE(b) keying_record_mode(b)
+#endif // FEATURE_MEMORIES
 void keying_select_transmitter(uint8_t xmitter);
 extern keying *system_transmitter;
 

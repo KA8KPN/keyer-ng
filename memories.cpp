@@ -12,6 +12,7 @@
 memories *system_memories = NULL;
 
 static uint8_t s_memories[MEMORY_SIZE];
+#if 0
 static uint8_t initialization[MEMORY_SIZE] = {
     0xde, 0x8a, 0xde, 0x9e,                                     // "M"
     0xca, 0x9e,                                                 // "E"
@@ -125,6 +126,7 @@ static uint8_t initialization[MEMORY_SIZE] = {
     0xca, 0x8a, 0xca, 0x8a, 0xde, 0x8a, 0xde, 0x8a, 0xde, 0x9e, // "2"
     0x00
 };
+#endif // 0
 
 void memories_initialize(void) {
     system_memories = new memories(12);
@@ -132,6 +134,7 @@ void memories_initialize(void) {
 
 memories::memories(int n) {
     int i;
+    #if 0
     // Okay, to begin with, I'm going to program each memory with "memory <X>" where <X> will be the memory
     // number from 1 12
     // So, the values in each memory will begin with
@@ -178,8 +181,25 @@ memories::memories(int n) {
 	s_memories[i] = initialization[i];
 	// s_memories[i] = 0;
     }
+#endif // 0
 
+    s_memories[0] = 0;
+    m_index[0] = 0;
+    m_index[1] = 0;
+    m_index[2] = 0;
+    m_index[3] = 0;
+    m_index[4] = 0;
+    m_index[5] = 0;
+    m_index[6] = 0;
+    m_index[7] = 0;
+    m_index[8] = 0;
+    m_index[9] = 0;
+    m_index[10] = 0;
+    m_index[11] = 0;
     m_mptr = -1;
+    m_lastByteTime = 0;
+    m_memRecording = 0;
+    m_bytesFree = 0;
 }
 
 
@@ -192,6 +212,72 @@ void memories::play_memory(uint8_t m) {
 
 
 void memories::record_memory(uint8_t m) {
+    // If m is nonzero, need to set up for recording.  I think I want to keep the memories in strictly
+    // ascending order, so I need to make room in the middle if it is in the middle.
+    // If m is zero, then I need to finish recording, if a recording was being made.
+    // I think I want to keep the memories tightly packed, so I need to put the stop byte in, then I
+    // need to move the data from the top down, squeezing out the empty space.
+
+    // At first, I will have one memory and I will record it.  It will always start at offset 0.
+    if (0 == m) {
+	s_memories[m_recordPtr] = 0;
+	KEYING_RECORD_MODE(false);
+    }
+    else {
+	m_recordPtr = 0;
+	m_bytesFree = MEMORY_SIZE-1;
+	KEYING_RECORD_MODE(true);
+    }
+    m_lastByteTime = 0;
+    m_memRecording = m;
+}
+
+void memories::record_element(bool is_key_down) {
+    // Procedure is this:  Take the time difference between the last transition and multiply by the twitches
+    // per ms to get twitches, and then encode that.  If we've run out of space, then stop recording, otherwise
+    // advance the counter.
+    unsigned long now = millis();
+
+    // char buffer[10];
+    // sprintf(buffer, "%8d", m_bytesFree);
+    // system_display_manager->m_display->setCursor(12, 2);
+    // system_display_manager->m_display->write((const uint8_t*) buffer, 8);
+    if (0 < m_bytesFree) {
+	if (is_key_down) {
+	    // Was up, now it's down.  If this is the first key down since recording started, I don't do
+	    // anything except record the time now, which is done elsewhere.  If I'm in the middle of the
+	    // recording, I record the silence that just got done.
+	    if (0 != m_lastByteTime) {
+		unsigned long diff;
+		diff = (WPM_TWITCHES()/2 + now - m_lastByteTime) / WPM_TWITCHES();
+		while ((0 < m_bytesFree) && (diff > 63)) {
+		    s_memories[m_recordPtr++] = 0xbf;
+		    --m_bytesFree;
+		    diff -= 63;
+		}
+		if (0 < m_bytesFree) {
+		    s_memories[m_recordPtr++] = 0x80 | (0x3f & diff);
+		    --m_bytesFree;
+		}
+	    }
+	}
+	else {
+	    // Was down, now it's up.  Record the time that the key was down.
+	    unsigned long diff;
+	    diff = (WPM_TWITCHES()/2 + now - m_lastByteTime) / WPM_TWITCHES();
+	    while ((0 < m_bytesFree) && (diff > 63)) {
+		s_memories[m_recordPtr++] = 0xff;
+		--m_bytesFree;
+		diff -= 63;
+	    }
+	    if (0 < m_bytesFree) {
+		s_memories[m_recordPtr++] = 0xc0 | (0x3f & diff);
+		--m_bytesFree;
+	    }
+	}
+    }
+
+    m_lastByteTime = millis();
 }
 
 
@@ -230,6 +316,7 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 	    break;
 
 	default:
+	    TRANSMITTER_KEY_UP();
 	    mode = CONFIG_MANAGER_PADDLES_MODE();
 	    DISPLAY_MANAGER_INPUT_SOURCE(mode, 0);
 	    m_mptr = -1;

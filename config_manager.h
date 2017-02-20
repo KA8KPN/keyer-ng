@@ -19,6 +19,7 @@ private:
     input_mode_t m_paddlesMode;
     bool m_isInCommandMode;
     uint8_t m_currentXmitter;
+    bool m_processing;
 };
 
 

@@ -3,6 +3,7 @@
 #include "keying.h"
 #include "keyer.h"
 #include "display.h"
+#include "memories.h"
 #include "config_manager.h"
 
 keying::keying(void) {}
@@ -36,6 +37,14 @@ protected:
     unsigned long m_nextStateChange;
 };
 
+
+#ifdef FEATURE_MEMORIES
+static keying *transmitters[6] = {NULL, NULL, NULL, NULL, NULL, NULL};
+#else // ! FEATURE_MEMORIES
+static keying *transmitters[5] = {NULL, NULL, NULL, NULL, NULL};
+#endif // !FEATURE_MEMORIES
+
+keying *system_transmitter = NULL;
 
 static void (*take_sidetone_action)(int frequency, bool key_down);
 
@@ -182,10 +191,6 @@ void transmitter::update(unsigned long now) {
 transmitter::~transmitter(void) {
 }
 
-keying *system_transmitter = NULL;
-static keying *transmitters[5] = {NULL, NULL, NULL, NULL, NULL};
-
-
 class cpo : public keying {
 public:
     cpo(int sidetone_freq);
@@ -228,6 +233,68 @@ unsigned cpo::key_down(void) {
 
 cpo::~cpo() {}
 
+#ifdef FEATURE_MEMORIES
+/***************************************************************************************/
+class recorder : public keying {
+public:
+    recorder(int sidetone_freq);
+    virtual void set_sidetone_freq(int sidetone_freq);
+    virtual void toggle_sidetone_enable(void);
+    virtual void key_up(void);
+    virtual unsigned key_down(void);
+    virtual void ptt_push(void) {}
+    virtual void ptt_release(void) {}
+    virtual void update(unsigned long now) {};
+    virtual ~recorder(void);
+
+private:
+    int m_sidetoneFreq;
+};
+
+recorder::recorder(int sidetone_freq) : keying() {
+    m_sidetoneFreq = sidetone_freq;
+}
+
+void recorder::set_sidetone_freq(int sidetone_freq) {
+    transmitters[CONFIG_MANAGER_XMITTER()]->set_sidetone_freq(sidetone_freq);
+    if (0 != sidetone_freq) {
+	m_sidetoneFreq = sidetone_freq;
+    }
+}
+
+void recorder::toggle_sidetone_enable(void) {
+    transmitters[CONFIG_MANAGER_XMITTER()]->toggle_sidetone_enable();
+}
+
+void recorder::key_up(void) {
+    noTone(SIDETONE);
+    RECORD_ELEMENT(false);
+}
+
+unsigned recorder::key_down(void) {
+    tone(SIDETONE, m_sidetoneFreq);
+    RECORD_ELEMENT(true);
+    return 0;
+}
+
+recorder::~recorder() {}
+#endif // 0
+
+#ifdef FEATURE_MEMORIES
+void keying_initialize(void) {
+    pinMode(SIDETONE, OUTPUT);
+    digitalWrite(SIDETONE, LOW);
+
+    transmitters[0] = new cpo(SIDETONE_FREQUENCY);
+    transmitters[1] = new transmitter(PTT_1, KEY_OUT_1, SIDETONE_FREQUENCY, PTT_DELAY_1, PTT_HANG_1);
+    transmitters[2] = new transmitter(PTT_2, KEY_OUT_2, SIDETONE_FREQUENCY, PTT_DELAY_2, PTT_HANG_2);
+    transmitters[3] = new transmitter(PTT_3, KEY_OUT_3, SIDETONE_FREQUENCY, PTT_DELAY_3, PTT_HANG_3);
+    transmitters[4] = new transmitter(PTT_4, KEY_OUT_4, SIDETONE_FREQUENCY, PTT_DELAY_4, PTT_HANG_4);
+    transmitters[5] = new recorder(SIDETONE_FREQUENCY);
+    system_transmitter = transmitters[1];
+    DISPLAY_MANAGER_XMIT_MODE(1);
+}
+#else // !FEATURE_MEMORIES
 void keying_initialize(void) {
     pinMode(SIDETONE, OUTPUT);
     digitalWrite(SIDETONE, LOW);
@@ -240,6 +307,7 @@ void keying_initialize(void) {
     system_transmitter = transmitters[1];
     DISPLAY_MANAGER_XMIT_MODE(1);
 }
+#endif // !FEATURE_MEMORIES
 
 void keying_config_mode(boolean enter_config_mode) {
     if (enter_config_mode) {
@@ -249,6 +317,20 @@ void keying_config_mode(boolean enter_config_mode) {
 	system_transmitter = transmitters[CONFIG_MANAGER_XMITTER()];
     }
 }
+
+
+#if defined(FEATURE_MEMORIES)
+void keying_record_mode(boolean enter_record_mode) {
+    uint8_t xmitter;
+
+    xmitter = 5;
+    if (!enter_record_mode) {
+	xmitter = CONFIG_MANAGER_XMITTER();
+    }
+    system_transmitter = transmitters[xmitter];
+    DISPLAY_MANAGER_XMIT_MODE(xmitter);
+}
+#endif // FEATURE_MEMORIES
 
 
 void keying_select_transmitter(uint8_t xmitter) {

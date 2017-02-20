@@ -16,6 +16,7 @@ private:
     uint8_t m_state;
     char m_commandBuffer[4];
     uint8_t m_buffPtr;
+    bool m_spaceSentLast;
 };
 
 extern morse_to_text system_mtt;

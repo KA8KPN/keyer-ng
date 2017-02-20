@@ -32,7 +32,7 @@
 
 #define INPUT_ROW 2
 #define INPUT_COL 0
-#define INPUT_WIDTH 20
+#define INPUT_WIDTH 11
 
 #define BUFFER_ROW 3
 #define BUFFER_WIDTH 20
@@ -75,6 +75,7 @@ String xmit_strings[] = {
     "Xmitter 2",
     "Xmitter 3",
     "Xmitter 4",
+    "Recording"
 };
 #else // !defined(DISPLAY_LARGE)
 String xmit_strings[] = {
@@ -82,7 +83,8 @@ String xmit_strings[] = {
     "Tx1",
     "Tx2",
     "Tx3",
-    "Tx4"
+    "Tx4",
+    "Mem"
 };
 #endif // !defined(DISPLAY_LARGE)
 
@@ -189,7 +191,8 @@ void display::wpm(int wpm) {
 
 
 void display::xmit_mode(int xmitter) {
-    if ((0 <= xmitter) && (4 >= xmitter)) {
+    // TODO:  Make the "5" depend on whether or not the memory feature is enabled
+    if ((0 <= xmitter) && (5 >= xmitter)) {
 	write_string_and_fill(XMITTER_COL, XMITTER_ROW, xmit_strings[xmitter], XMITTER_WIDTH);
     }
 }

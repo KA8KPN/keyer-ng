@@ -95,8 +95,6 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		break;
 
 	    case KEY_DAH:
-		// TODO:  If it ever returns to the start state, it should indicate that there was a symbol
-		// TODO:  it did not decode.
 		MORSE_TO_TEXT_UPDATE(Dah);
 		ptt_delay = TRANSMITTER_KEY_DOWN();
 		m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + ptt_delay;
@@ -110,7 +108,9 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		if (KEY_UP == m_lastKeyerState) {
 		    MORSE_TO_TEXT_UPDATE(CharSpace);
 		    input_mode = m_paddleMode;
-		    m_addSpaceMs = now + WPM_DASH_TWITCHES();
+		    if (0 == m_addSpaceMs) {
+			m_addSpaceMs = now + WPM_DASH_TWITCHES();
+		    }
 		}
 		else {
 		    TRANSMITTER_KEY_UP();

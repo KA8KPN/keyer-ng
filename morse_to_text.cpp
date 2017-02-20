@@ -18,6 +18,7 @@ morse_to_text::morse_to_text() {
     m_state = 0;
     m_commandBuffer[0] = '\0';
     m_buffPtr = 0;
+    m_spaceSentLast = false;
 }
 
 /*
@@ -31,6 +32,8 @@ morse_to_text::morse_to_text() {
  * I'll have to think on the best way to implement this, but it shouldn't be too tough.
  */
 
+// TODO:  If it ever returns to the start state, it should indicate that there was a symbol
+// TODO:  it did not decode.
 void morse_to_text::update(mtt_symbol s) {
     switch (s) {
     case Dit: case Dah:
@@ -51,17 +54,19 @@ void morse_to_text::update(mtt_symbol s) {
 		}
 		m_commandBuffer[m_buffPtr+1] = '\0';
 	    }
+	    m_spaceSentLast = false;
 	}
 	m_state = 0;
 	break;
 
     case WordSpace:
-	if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
-	    CONFIG_MANAGER_PROCESS_COMMAND(m_commandBuffer);
-	    m_buffPtr = 0;
-	    m_commandBuffer[0] = '\0';
-	}
-	else {
+	if (!m_spaceSentLast) {
+	    if (true || CONFIG_MANAGER_GET_COMMAND_MODE()) {
+		CONFIG_MANAGER_PROCESS_COMMAND(m_commandBuffer);
+		m_buffPtr = 0;
+		m_commandBuffer[0] = '\0';
+	    }
+	    m_spaceSentLast = true;
 	    DISPLAY_MANAGER_SCROLLING_TEXT(' ');
 	}
 	m_state = 0;
