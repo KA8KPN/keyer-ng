@@ -43,8 +43,8 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 	m_ditClosed = m_ditClosed || (0 == digitalRead(m_ditPaddle));
     }
 
-    if (now >= m_nextStateTransitionMs) {
-	if ((MODE_PADDLE_NORMAL == input_mode) || (MODE_PADDLE_REVERSE == input_mode)) {
+    if ((MODE_PADDLE_NORMAL == input_mode) || (MODE_PADDLE_REVERSE == input_mode)) {
+	if (now >= m_nextStateTransitionMs) {
 	    unsigned ptt_delay;
 	    keyer_state_t tempKeyerState;
  
@@ -119,11 +119,11 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		break;
 	    }
 	}
-    }
 
-    if ((0 < m_addSpaceMs) && (now >= m_addSpaceMs) && ((MODE_PADDLE_NORMAL == input_mode) || (MODE_PADDLE_REVERSE == input_mode))) {
-	m_addSpaceMs = 0;
-	MORSE_TO_TEXT_UPDATE(WordSpace);
+	if ((0 < m_addSpaceMs) && (now >= m_addSpaceMs)) {
+	    m_addSpaceMs = 0;
+	    MORSE_TO_TEXT_UPDATE(WordSpace);
+	}
     }
     return input_mode;
 }
