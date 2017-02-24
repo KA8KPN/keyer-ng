@@ -121,7 +121,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 	}
     }
 
-    if ((0 < m_addSpaceMs) && (now >= m_addSpaceMs)) {
+    if ((0 < m_addSpaceMs) && (now >= m_addSpaceMs) && ((MODE_PADDLE_NORMAL == input_mode) || (MODE_PADDLE_REVERSE == input_mode))) {
 	m_addSpaceMs = 0;
 	MORSE_TO_TEXT_UPDATE(WordSpace);
     }
