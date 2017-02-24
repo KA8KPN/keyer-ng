@@ -210,7 +210,7 @@ DONE) Morse through the serial port (although it could use some enhancement)
 
 DONE) I'm having trouble sending KN, figure out why and fix it.  (I modified the paddle scan timing.)
 
-Allow for the programming and playing back of memories.  Make sure that the display shows the memory number.  Also, the morse-to-text should put the text out as it is sent.
+Allow for the programming and playing back of memories.  Make sure that the display shows the memory number on playback.  Also, the morse-to-text should put the text out as it is sent.   Also, put the number of memory bytes remaining on the display.
 
 Add some audio cues for operating without a display.  (Enter program mode, exit program mode, start programming the memory, memory programmed, error condition.  There may be others.)
 

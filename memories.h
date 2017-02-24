@@ -36,7 +36,7 @@ private:
 
 extern memories *system_memories;
 
-#define MEMORIES_INITIALIZE() memories_initialize();
+#define MEMORIES_INITIALIZE() memories_initialize()
 #define MEMORIES_UPDATE(now, keyer_mode)     system_memories->update(now, keyer_mode)
 #define PLAY_MEMORY(n)        system_memories->play_memory(n)
 #define RECORD_MEMORY(n)      system_memories->record_memory(n)

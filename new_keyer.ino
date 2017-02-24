@@ -12,6 +12,7 @@
 #include "buttons.h"
 #include "config_manager.h"
 #include "memories.h"
+#include "serial_debug.h"
 
 #include "keyer.h"
 
@@ -32,6 +33,7 @@ void setup () {
     PS2_KEYBOARD_INITIALIZE();
     BUTTONS_INITIALIZE();
     MEMORIES_INITIALIZE();
+    SERIAL_DEBUG_INITIALIZE();
     CONFIG_MANAGER_INITIALIZE();  // This needs to be after all the configurable options
 }
 

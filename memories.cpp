@@ -133,7 +133,6 @@ void memories_initialize(void) {
 }
 
 memories::memories(int n) {
-    int i;
     #if 0
     // Okay, to begin with, I'm going to program each memory with "memory <X>" where <X> will be the memory
     // number from 1 12
@@ -183,7 +182,7 @@ memories::memories(int n) {
     }
 #endif // 0
 
-    s_memories[0] = 0;
+    memset(s_memories, 0, MEMORY_SIZE);
     m_index[0] = 0;
     m_index[1] = 0;
     m_index[2] = 0;
@@ -219,14 +218,62 @@ void memories::record_memory(uint8_t m) {
     // need to move the data from the top down, squeezing out the empty space.
 
     // At first, I will have one memory and I will record it.  It will always start at offset 0.
-    if (0 == m) {
+    if ((0 == m) && (0 != m_memRecording)) {
 	s_memories[m_recordPtr] = 0;
+
+	if (12 != m_memRecording) {
+	    uint16_t offset;
+	    // Now, I have to move everything down from m_index[m_memRecording] to m_recordPtr+1 unless, I was doing memory 12.
+	    memmove(s_memories+m_recordPtr+1, s_memories+m_index[m_memRecording], MEMORY_SIZE-m_index[m_memRecording]+1);
+	    offset = m_index[m_memRecording] - m_recordPtr - 1;
+	    for (int i=m_memRecording; i<12; ++i) {
+		m_index[i] -= offset;
+	    }
+	}
+
 	KEYING_RECORD_MODE(false);
     }
     else {
-	m_recordPtr = 0;
-	m_bytesFree = MEMORY_SIZE-1;
-	KEYING_RECORD_MODE(true);
+	// Step, the first.  Find the space to begin recording.  This will only be different if "m" is
+	// greater than 1 and if m-1 is the same as m.
+	if (m > 1) {
+	    if (m_index[m-2] == m_index[m-1]) {
+		m_recordPtr = m_index[m-2];
+		while (0 != s_memories[m_recordPtr]) {
+		    ++m_recordPtr;
+		}
+		++m_recordPtr; // I'm looking for the character past the last one
+	    }
+	    else {
+		m_recordPtr = m_index[m-1];
+	    }
+	}
+	else {
+	    m_recordPtr = 0;
+	}
+	if (m_recordPtr < MEMORY_SIZE) {
+	    // Step, the second.  I need to move everything above memory "m" to the top of the memory space
+	    if (12 > m) {
+		uint16_t top;
+		top = m_index[11];
+		while (0 != s_memories[top]) {
+		    ++top;
+		}
+		// at this point, "top" points to the terminator for memory 11.  I need to move that memory as
+		// a block and update the pointers in m_index
+		memmove(s_memories+MEMORY_SIZE+m_index[m]-top-1, s_memories+m_index[m], 1+top-m_index[m]);
+		for (int i=m; i<12; ++i) {
+		    m_index[i] += MEMORY_SIZE-top-1;
+		}
+		// Step, the last.  I need to calculate the number of bytes free.
+		m_bytesFree = MEMORY_SIZE - top + m_index[m] - m_recordPtr - 2;
+	    }
+	    else {
+		m_bytesFree = MEMORY_SIZE - m_recordPtr - 1;
+	    }
+	    KEYING_RECORD_MODE(true);
+	}
+	m_index[m-1] = m_recordPtr;
     }
     m_lastByteTime = 0;
     m_memRecording = m;
@@ -293,25 +340,22 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 	    m_nextByteTime = now + WPM_TWITCHES() * (0x3f & s_memories[m_mptr]);
 	    TRANSMITTER_KEY_UP();
 	    if (15 < (0x3f & s_memories[m_mptr])) {
-		if (35 < (0x3f & s_memories[m_mptr])) {
+		MORSE_TO_TEXT_UPDATE(CharSpace);
+		if (40 < (0x3f & s_memories[m_mptr])) {
 		    MORSE_TO_TEXT_UPDATE(WordSpace);
-		}
-		else {
-		    MORSE_TO_TEXT_UPDATE(CharSpace);
 		}
 	    }
 	    m_mptr++;
 	    break;
 
 	case 3:
-	    m_nextByteTime = now + WPM_TWITCHES() * (0x3f & s_memories[m_mptr]);
-	    TRANSMITTER_KEY_DOWN();
 	    if (15 < (0x3f & s_memories[m_mptr])) {
 		MORSE_TO_TEXT_UPDATE(Dah);
 	    }
 	    else {
 		MORSE_TO_TEXT_UPDATE(Dit);
 	    }
+	    m_nextByteTime = now + WPM_TWITCHES() * (0x3f & s_memories[m_mptr]) + TRANSMITTER_KEY_DOWN();
 	    m_mptr++;
 	    break;
 
@@ -320,6 +364,7 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 	    mode = CONFIG_MANAGER_PADDLES_MODE();
 	    DISPLAY_MANAGER_INPUT_SOURCE(mode, 0);
 	    m_mptr = -1;
+	    MORSE_TO_TEXT_UPDATE(CharSpace);
 	    MORSE_TO_TEXT_UPDATE(WordSpace);
 	    break;
 	}

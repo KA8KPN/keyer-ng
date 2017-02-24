@@ -32,13 +32,11 @@ void config_manager::process_command(const char *command) {
 	    break;
 
 	case 'P':
-	    RECORD_MEMORY(1);
-	    m_processing = true;
-#if 0
 	    KEYING_RECORD_MODE(true);
 	    if (isdigit(command[1])) {
+		RECORD_MEMORY(atoi(command+1));
+		m_processing = true;
 	    }
-#endif // 0
 	    break;
 
 	default:
