@@ -54,16 +54,18 @@ void memories::record_memory(uint8_t m) {
     // need to move the data from the top down, squeezing out the empty space.
 
     // At first, I will have one memory and I will record it.  It will always start at offset 0.
-    if ((0 == m) && (0 != m_memRecording)) {
-	s_memories[m_recordPtr] = 0;
+    if (0 == m) {
+	if (0 != m_memRecording) {
+	    s_memories[m_recordPtr] = 0;
 
-	if (12 != m_memRecording) {
-	    uint16_t offset;
-	    // Now, I have to move everything down from m_index[m_memRecording] to m_recordPtr+1 unless, I was doing memory 12.
-	    memmove(s_memories+m_recordPtr+1, s_memories+m_index[m_memRecording], MEMORY_SIZE-m_index[m_memRecording]+1);
-	    offset = m_index[m_memRecording] - m_recordPtr - 1;
-	    for (int i=m_memRecording; i<12; ++i) {
-		m_index[i] -= offset;
+	    if (12 != m_memRecording) {
+		uint16_t offset;
+		// Now, I have to move everything down from m_index[m_memRecording] to m_recordPtr+1 unless, I was doing memory 12.
+		memmove(s_memories+m_recordPtr+1, s_memories+m_index[m_memRecording], MEMORY_SIZE-m_index[m_memRecording]+1);
+		offset = m_index[m_memRecording] - m_recordPtr - 1;
+		for (int i=m_memRecording; i<12; ++i) {
+		    m_index[i] -= offset;
+		}
 	    }
 	}
 
