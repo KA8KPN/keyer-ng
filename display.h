@@ -19,6 +19,8 @@ public:
     void scrolling_text(char c);
     void sidetone(int freq);
     void prog_mode(bool is_in_prog_mode);
+    void number(int n);
+    void clear_number(void);
 
 private:
     LiquidCrystal_I2C *m_display;
@@ -36,6 +38,8 @@ void display_manager_initialize(void);
 #define DISPLAY_MANAGER_SCROLLING_TEXT(c)       system_display_manager->scrolling_text(c)
 #define DISPLAY_MANAGER_SIDETONE(freq)          system_display_manager->sidetone(freq)
 #define DISPLAY_MANAGER_PROG_MODE(b)            system_display_manager->prog_mode(b)
+#define DISPLAY_MANAGER_NUMBER(n)               system_display_manager->number(n)
+#define DISPLAY_MANAGER_CLEAR_NUMBER()          system_display_manager->clear_number()
 #else // !LCD_DISPLAY
 #define DISPLAY_MANAGER_INITIALIZE()
 #define DISPLAY_MANAGER_KEY_MODE(mode)          ((void)mode)
@@ -45,6 +49,8 @@ void display_manager_initialize(void);
 #define DISPLAY_MANAGER_SCROLLING_TEXT(c)       ((void)c)
 #define DISPLAY_MANAGER_SIDETONE(freq)          ((void)freq)
 #define DISPLAY_MANAGER_PROG_MODE(b)            ((void)b)
+#define DISPLAY_MANAGER_NUMBER(n)               ((void)n)
+#define DISPLAY_MANAGER_CLEAR_NUMBER()
 
 #endif // LCD_DISPLAY
 

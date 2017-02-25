@@ -44,7 +44,7 @@ void morse_to_text::update(mtt_symbol s) {
 	if (0 != morse_decode_table[m_state].c) {
 	    DISPLAY_MANAGER_SCROLLING_TEXT(morse_decode_table[m_state].c);
 	    if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
-		if (m_buffPtr > 1) {
+		if (m_buffPtr > 2) {
 		    m_commandBuffer[0] = m_commandBuffer[1];
 		    m_commandBuffer[1] = m_commandBuffer[2];
 		    m_commandBuffer[2] = morse_decode_table[m_state].c;
@@ -52,7 +52,7 @@ void morse_to_text::update(mtt_symbol s) {
 		else {
 		    m_commandBuffer[m_buffPtr++] = morse_decode_table[m_state].c;
 		}
-		m_commandBuffer[m_buffPtr+1] = '\0';
+		m_commandBuffer[m_buffPtr] = '\0';
 	    }
 	    m_spaceSentLast = false;
 	}

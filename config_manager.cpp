@@ -32,7 +32,6 @@ void config_manager::process_command(const char *command) {
 	    break;
 
 	case 'P':
-	    KEYING_RECORD_MODE(true);
 	    if (isdigit(command[1])) {
 		RECORD_MEMORY(atoi(command+1));
 		m_processing = true;

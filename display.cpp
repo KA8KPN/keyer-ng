@@ -34,6 +34,10 @@
 #define INPUT_COL 0
 #define INPUT_WIDTH 11
 
+#define NUMBER_ROW 2
+#define NUMBER_COL 11
+#define NUMBER_WIDTH 9
+
 #define BUFFER_ROW 3
 #define BUFFER_WIDTH 20
 #else // !DISPLAY_LARGE
@@ -210,6 +214,26 @@ void display::input_source(input_mode_t mode, uint8_t which) {
 	    m_display->write((const uint8_t *)buffer, 2);
 	}
     }
+}
+
+void display::number(int number) {
+#if defined(DISPLAY_LARGE)
+    char buffer[NUMBER_WIDTH+1];
+
+    snprintf(buffer, NUMBER_WIDTH+1, "%9d", number);
+    m_display->setCursor(NUMBER_COL, NUMBER_ROW);
+    m_display->write((const uint8_t *)buffer, NUMBER_WIDTH);
+#endif // defined(DISPLAY_LARGE)
+}
+
+void display::clear_number() {
+#if defined(DISPLAY_LARGE)
+    char buffer[NUMBER_WIDTH+1];
+
+    snprintf(buffer, NUMBER_WIDTH+1, "%9s", "");
+    m_display->setCursor(NUMBER_COL, NUMBER_ROW);
+    m_display->write((const uint8_t *)buffer, NUMBER_WIDTH);
+#endif // defined(DISPLAY_LARGE)
 }
 
 void display::scrolling_text(char c) {

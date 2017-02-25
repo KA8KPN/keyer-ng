@@ -68,48 +68,56 @@ void memories::record_memory(uint8_t m) {
 	}
 
 	KEYING_RECORD_MODE(false);
+	DISPLAY_MANAGER_CLEAR_NUMBER();
     }
     else {
-	// Step, the first.  Find the space to begin recording.  This will only be different if "m" is
-	// greater than 1 and if m-1 is the same as m.
-	if (m > 1) {
-	    if (m_index[m-2] == m_index[m-1]) {
-		m_recordPtr = m_index[m-2];
-		while (0 != s_memories[m_recordPtr]) {
-		    ++m_recordPtr;
+	if (13 > m) {
+	    // Step, the first.  Find the space to begin recording.  This will only be different if "m" is
+	    // greater than 1 and if m-1 is the same as m.
+	    if (m > 1) {
+		if (m_index[m-2] == m_index[m-1]) {
+		    m_recordPtr = m_index[m-2];
+		    while (0 != s_memories[m_recordPtr]) {
+			++m_recordPtr;
+		    }
+		    ++m_recordPtr; // I'm looking for the character past the last one
 		}
-		++m_recordPtr; // I'm looking for the character past the last one
+		else {
+		    m_recordPtr = m_index[m-1];
+		}
 	    }
 	    else {
-		m_recordPtr = m_index[m-1];
+		m_recordPtr = 0;
 	    }
+	    if (m_recordPtr < MEMORY_SIZE) {
+		// Step, the second.  I need to move everything above memory "m" to the top of the memory space
+		if (12 > m) {
+		    uint16_t top;
+		    top = m_index[11];
+		    while (0 != s_memories[top]) {
+			++top;
+		    }
+		    // at this point, "top" points to the terminator for memory 11.  I need to move that memory as
+		    // a block and update the pointers in m_index
+		    memmove(s_memories+MEMORY_SIZE+m_index[m]-top-1, s_memories+m_index[m], 1+top-m_index[m]);
+		    for (int i=m; i<12; ++i) {
+			m_index[i] += MEMORY_SIZE-top-1;
+		    }
+		    // Step, the last.  I need to calculate the number of bytes free.
+		    m_bytesFree = m_index[m] - m_recordPtr - 1;
+		}
+		else {
+		    m_bytesFree = MEMORY_SIZE - m_recordPtr - 1;
+		}
+		KEYING_RECORD_MODE(true);
+	    }
+	    m_index[m-1] = m_recordPtr;
+	    DISPLAY_MANAGER_NUMBER(m_bytesFree);
 	}
 	else {
-	    m_recordPtr = 0;
+	    // Invalid memory number.  Give it up as a bad job
+	    KEYING_RECORD_MODE(false);
 	}
-	if (m_recordPtr < MEMORY_SIZE) {
-	    // Step, the second.  I need to move everything above memory "m" to the top of the memory space
-	    if (12 > m) {
-		uint16_t top;
-		top = m_index[11];
-		while (0 != s_memories[top]) {
-		    ++top;
-		}
-		// at this point, "top" points to the terminator for memory 11.  I need to move that memory as
-		// a block and update the pointers in m_index
-		memmove(s_memories+MEMORY_SIZE+m_index[m]-top-1, s_memories+m_index[m], 1+top-m_index[m]);
-		for (int i=m; i<12; ++i) {
-		    m_index[i] += MEMORY_SIZE-top-1;
-		}
-		// Step, the last.  I need to calculate the number of bytes free.
-		m_bytesFree = MEMORY_SIZE - top + m_index[m] - m_recordPtr - 2;
-	    }
-	    else {
-		m_bytesFree = MEMORY_SIZE - m_recordPtr - 1;
-	    }
-	    KEYING_RECORD_MODE(true);
-	}
-	m_index[m-1] = m_recordPtr;
     }
     m_lastByteTime = 0;
     m_memRecording = m;
@@ -161,6 +169,7 @@ void memories::record_element(bool is_key_down) {
     }
 
     m_lastByteTime = millis();
+    DISPLAY_MANAGER_NUMBER(m_bytesFree);
 }
 
 
