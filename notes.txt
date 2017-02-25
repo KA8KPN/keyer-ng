@@ -212,9 +212,9 @@ DONE) I'm having trouble sending KN, figure out why and fix it.  (I modified the
 
 DONE) Allow for the programming and playing back of memories.  Make sure that the display shows the memory number on playback.  Also, the morse-to-text should put the text out as it is sent.   Also, put the number of memory bytes remaining on the display.
 
-Add some audio cues for operating without a display.  (Enter program mode, exit program mode, start programming the memory, memory programmed, error condition.  There may be others.)
+DONE) Add some audio cues for operating without a display.  (Enter program mode, exit program mode, start programming the memory, memory programmed, error condition.  There may be others.)
 
-Figure out how to better do the morse tables so that there aren't remnants hanging around if they aren't needed
+DONE)  Figure out how to better do the morse tables so that there aren't remnants hanging around if they aren't needed
 
 Fix the configuration stuff through the PS/2 keyboard.  I'm not doing control characters properly.
 
@@ -222,4 +222,8 @@ Make runtime configurations persistent as a feature
 
 Add a serial number capability to the memorized messages.
 
-Use the backslash as an keyboard command escape key
+Use the backslash as an keyboard command escape key.
+
+Make the commands a superset of K3NG's.
+
+Update the morse_table_builder.c to build tables to build precisely the tables that are needed instead of requiring hand rework.

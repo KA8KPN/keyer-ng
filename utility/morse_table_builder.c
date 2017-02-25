@@ -132,7 +132,8 @@ void build_morse_decode_table() {
 	    morse_decode_table[current_element].c = inputs[i].c;
 	}
     }
-    puts("\n\n\n// The morse_decode_table is an array of elements formed into a binary tree.  Each");
+    puts("\n\n\n#ifdef FEATURE_MORSE_TO_TEXT");
+    puts("// The morse_decode_table is an array of elements formed into a binary tree.  Each");
     puts("// of the elements consists of a printable character, which is what it prints if it is at");
     puts("// the end of a character with the pointer in that state, and an array of two elements ");
     puts("// if the next sound is a dit, it chooses the index held at offset zero in the two element");
@@ -150,6 +151,7 @@ void build_morse_decode_table() {
     puts("#else //! DEFINE_MORSE_TABLES");
     puts("extern morse_decode_t morse_decode_table[];");
     puts("#endif //! DEFINE_MORSE_TABLES");
+    puts("#endif // FEATURE_MORSE_TO_TEXT");
 }
 
 
@@ -158,7 +160,7 @@ int main(int argc, char **argv) {
     (void) argv;
 
     puts("#ifndef MORSE_TABLE_H_INCLUDED");
-    puts("#define MORSE_TABLE_H_INCLUDED");
+    puts("#define MORSE_TABLE_H_INCLUDED\n");
 
     uint16_t outputs[256];
     int i;
@@ -194,6 +196,7 @@ int main(int argc, char **argv) {
 	}
     }
 
+    puts("#ifdef FEATURE_TEXT_TO_MORSE");
     puts("// The most significant four bits holds a count of the sounds made");
     puts("// The bottom 12 bits hold a bitmap of the length of the sounds, with the");
     puts("// least significant bit holding the first sound, the next least significant");
@@ -229,7 +232,7 @@ int main(int argc, char **argv) {
     puts("#else //! DEFINE_MORSE_TABLES");
     puts("extern uint16_t morse_table[];");
     puts("#endif //! DEFINE_MORSE_TABLES");
-
+    puts("#endif // FEATURE_TEXT_TO_MORSE");
 
     build_morse_decode_table();
 

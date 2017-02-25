@@ -14,6 +14,8 @@ public:
     bool command_mode(void) const { return m_isInCommandMode; }
     void command_mode(bool is_in_command_mode);
     uint8_t xmitter(void) const { return m_currentXmitter; }
+    void memory_start_tones(void);
+    void memory_end_tones(void);
 
 private:
     input_mode_t m_paddlesMode;
@@ -31,5 +33,7 @@ void config_manager_initialize(void);
 #define CONFIG_MANAGER_GET_COMMAND_MODE()  system_config_manager.command_mode()
 #define CONFIG_MANAGER_SET_COMMAND_MODE(b) system_config_manager.command_mode(b)
 #define CONFIG_MANAGER_XMITTER()           system_config_manager.xmitter()
+#define CONFIG_MANAGER_MEM_START_TONES()   system_config_manager.memory_start_tones()
+#define CONFIG_MANAGER_MEM_END_TONES()     system_config_manager.memory_end_tones()
 
 #endif // CONFIG_MANAGER_H_INCLUDED

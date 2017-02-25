@@ -56,6 +56,7 @@ void memories::record_memory(uint8_t m) {
     // At first, I will have one memory and I will record it.  It will always start at offset 0.
     if (0 == m) {
 	if (0 != m_memRecording) {
+	    CONFIG_MANAGER_MEM_END_TONES();
 	    s_memories[m_recordPtr] = 0;
 
 	    if (12 != m_memRecording) {
@@ -74,6 +75,7 @@ void memories::record_memory(uint8_t m) {
     }
     else {
 	if (13 > m) {
+	    CONFIG_MANAGER_MEM_START_TONES();
 	    // Step, the first.  Find the space to begin recording.  This will only be different if "m" is
 	    // greater than 1 and if m-1 is the same as m.
 	    if (m > 1) {

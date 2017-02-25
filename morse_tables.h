@@ -1,5 +1,7 @@
 #ifndef MORSE_TABLE_H_INCLUDED
 #define MORSE_TABLE_H_INCLUDED
+
+#ifdef FEATURE_TEXT_TO_MORSE
 // The most significant four bits holds a count of the sounds made
 // The bottom 12 bits hold a bitmap of the length of the sounds, with the
 // least significant bit holding the first sound, the next least significant
@@ -45,9 +47,11 @@ uint16_t morse_table[] = {
 #else //! DEFINE_MORSE_TABLES
 extern uint16_t morse_table[];
 #endif //! DEFINE_MORSE_TABLES
+#endif // FEATURE_TEXT_TO_MORSE
 
 
 
+#ifdef FEATURE_MORSE_TO_TEXT
 // The morse_decode_table is an array of elements formed into a binary tree.  Each
 // of the elements consists of a printable character, which is what it prints if it is at
 // the end of a character with the pointer in that state, and an array of two elements 
@@ -128,4 +132,5 @@ morse_decode_t morse_decode_table[] = {
 #else //! DEFINE_MORSE_TABLES
 extern morse_decode_t morse_decode_table[];
 #endif //! DEFINE_MORSE_TABLES
+#endif // FEATURE_MORSE_TO_TEXT
 #endif // MORSE_TABLE_H_INCLUDED
