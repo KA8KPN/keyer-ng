@@ -61,7 +61,7 @@ void morse_to_text::update(mtt_symbol s) {
 
     case WordSpace:
 	if (!m_spaceSentLast) {
-	    if (true || CONFIG_MANAGER_GET_COMMAND_MODE()) {
+	    if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
 		CONFIG_MANAGER_PROCESS_COMMAND(m_commandBuffer);
 		m_buffPtr = 0;
 		m_commandBuffer[0] = '\0';

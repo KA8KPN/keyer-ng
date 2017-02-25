@@ -216,6 +216,8 @@ DONE) Add some audio cues for operating without a display.  (Enter program mode,
 
 DONE)  Figure out how to better do the morse tables so that there aren't remnants hanging around if they aren't needed
 
+DONE)  Eliminate the raspberry at startup.  And the one after every word.
+
 Fix the configuration stuff through the PS/2 keyboard.  I'm not doing control characters properly.
 
 Make runtime configurations persistent as a feature
