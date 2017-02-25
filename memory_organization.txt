@@ -1,0 +1,85 @@
+Okay, suppose I have this organization:
+
+With four memories in a 1000-character memory array (numbered from 0 to 999)
+
+At the beginning, memories, 1, 2, 3, and 4 all point at offset 0, and the memory looks like this:
+
+\0 \0 \0 \0 ... \0
+
+Call this organization:  an initialized memory store
+
+CASE 1)  Now, suppose that I write to memory 1. At the beginning of the recording, the memory will still contain only \0's but the indexes for memories 2, 3, and 4, will all have 999, while the memory 1 index will contain 0.  (The memory 1 index will ALWAYS be 0, so I suppose I don't need it.  However, it simplifies the code so I will keep it.)
+
+CASE 2) Now, suppose I have an initialized memory store, and I write to memory 2.  At the beginning of recording, memory 1 will have an index of 0, memory 2 will have an index of 1, and memories 3 and 4 will have indices of 999.
+
+CASE 3) Now, suppose that I have an initialized memory store, and I write to memory 3.  At the beginning of recording, memories 1, 2, and 3 will have an index of 0, and memory 3 will have an index of 1.
+
+Okay, in the first two cases, some of the memories must be moved, and then moved back.  I'll talk about moving back later.  In the first case, I move the byte at 0 (that being the offset of memories 2, 3, and 4) and I copy byte 0 to 999.  So, I have to add 999 to the offsets of memories 2, 3, and 4.  I am copying 1 byte from 0 to 999.  I also have 998 bytes available for storage, but that has to include the 0 at the end of memory 1, so there are 997 bytes.
+
+In the second case, I copy the byte 0 (that being the offset of memories 3 and 4) to 999, so I add  999 to the offsets of memories 3 and 4.  I also have to set the value of the index of memory 2 to one past the end of memory 1.  So, the index of memory 2 must be 1.  I am copying 1 byte from 0 to 999.  I have 997 bytes available for storage, but there must be a 0 byte at the end of memory 2, so there are actually 996 bytes.
+
+In the third case, nothing gets moved, but I have to determine the number of bytes available for storage.  In this case, it will be 998 bytes, of which 997 are available.
+
+Okay, that's clear.
+
+Suppose, now I have a memory organized like this:
+
+ 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14
+\0  1  1  1  1  1 \0  2  2  2  2  2  2  2 \0
+
+In this case, I've got memory 1 and 2 having no data in them, memory 3 starts at offset 1 has 6 bytes in it (including the end marker) and memory 4 starts at offset 7 and has 8 bytes in it.
+
+CASE 4) If I write to memory 1, then I have to move all 15 bytes from offset 0 to offset 985, and the index of memory 2 would be 985, and the index of memory 3 would be 986, and the index of memory 4 is 992.  The available memory would be 1000 - 15 - 1 - 0 where the "-1" is because of the end of message marker and  "-0" is because I'm writing starting at the 0 offset.
+
+CASE 5) If I write to memory 2, then I have to move 14 bytes from offset 1 to offset 986, and the index of memory 2 would be 1, the index of memory 3 is 986, and the index of memory 4 is 992.  There would be 1000 - 14 - 1 - 1 bytes usable for storage?  Is that true?  It starts at offset 1 and goes to offset 985, with 1 byte preallocated for the end of memory marker.  That would be 984 bytes in all, so that's confirmed.
+
+CASE 6) If I write to memory 3, then I have to move the 8 bytes from offset 7 to offset 992, and the index of memories 1 and 2 would be 0, and the index of memory 3 would be 1.  The number of bytes available would be 1000 - 8 - 1 - 1 or 990 bytes?  Going from offset 1 to 991, but preallocating the end of memory marker is 990 bytes.
+
+Okay, that seems clear.
+
+CASE 7) If I write to memory 4, then don't have to move any memories, and I start recording at byte 7 and the number of bytes available would be 1000 - 0 - 7 - 1 or 992 bytes.  Okay?  Going from offset 7 to 999, with one byte preallocated.  Yes, 992.
+
+In general, it appears that the memory bytes available is 1000 (the size of the memory) - (the number of bytes to move) - (the offset of the current memory block) - 1 (space for the terminator)
+
+So, MEMORY_SIZE - (1+top-index) - m_recordPtr - 1
+MEMORY_SIZE - top + index - m_recordPtr -2
+
+MEMORY_SIZE - m_recordPtr - 1
+
+==================================================================================================
+Now, copying back.
+
+Suppose I write 10 plus the case number of bytes recorded in each case.  That is, 11 bytes in case 1, 12 bytes and case 2, and up to 17 bytes in case 3.  There would be an additional byte added for the terminator.  
+
+In case 1, memory 1 runs from 0 to 11.  So, I need to copy 1 byte from 999 to 12, and I have to subtract 987 from the indexes for memories 2, 3, and 4.
+
+In case 2, memory 2 runs from 1 to 13.  So I need to copy 1 byte from 999 to 14, and I have to subtract 985 from the indexes for memories 3 and 4.
+
+In case 3, memory 4 runs from 1 to 14, but I need not copy any data.
+
+In case 4, memory 1 runs from 0 to 14.  So, I need to copy all 15 bytes from 985 to 15.  I would have to subtract 970 from the indexes for memories 2, 3, and 4.
+
+In case 5, memory 2 runs from 1 to 16.  So, I need to copy all 14 bytes from 986 to 17.  I would have to subtract 969 from the indexes for memories 3 and 4
+
+In case 6, memory 3 runs from 1 to 17.  So, I need to copy all 8 bytes from 992 to 18.  I would have to subtract 974 from the index for memory 4.
+
+In case 7, memory 4 runs from 7 to 24, but I need not copy any data.
+
+Okay, what have I concluded.  Well, the last memory is special.  So, I don't copy memory in either direction.
+
+For all others, I copy from the beginning of the memory after the first to the offset of the terminating byte of the last memory to the end of the memory store.
+
+If "index" is the index of the appropriate memory, and "top" is the offset of the terminator to memory 12, then the amount of data to copy is 1 + top - index
+
+The beginning offset is index, and the destination offset is MEMORY_SIZE + index - top - 1
+
+The amount I add to the indexes of the appropriate memories is the difference between the destination offset and first index.  So, MEMORY_SIZE + index - top - 1 - index so MEMORY_SIZE - top - 1
+
+How much memory is free?
+
+To talk about copying back, define "index" as the index of the appropriate memory and "top" as the end of the memory being recorded.
+
+The amount of data to copy is the difference between the appropriate index MEMORY_SIZE - index + 1.  The begin offset is index, the end offset is top + 1.
+
+The amount that should be deducted from each index is "index - top - 1"
+
