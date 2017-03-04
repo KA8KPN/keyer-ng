@@ -9,28 +9,30 @@
 #include "display.h"
 #include "morse_to_text.h"
 
-memories *system_memories = NULL;
+memories system_memories;
 
-static uint8_t s_memories[MEMORY_SIZE];
+uint8_t *s_memories;  // Actually an array of MEMORY_SIZE that is owned by the configuration manager
 
 void memories_initialize(void) {
-    system_memories = new memories(12);
 }
 
-memories::memories(int n) {
-    memset(s_memories, 0, MEMORY_SIZE);
+void memories::config(uint8_t *memories) {
+    s_memories = memories;
+    int idxptr = 1;
+    int memptr = 1;
+
     m_index[0] = 0;
-    m_index[1] = 0;
-    m_index[2] = 0;
-    m_index[3] = 0;
-    m_index[4] = 0;
-    m_index[5] = 0;
-    m_index[6] = 0;
-    m_index[7] = 0;
-    m_index[8] = 0;
-    m_index[9] = 0;
-    m_index[10] = 0;
-    m_index[11] = 0;
+    while (idxptr < MAX_MEMORIES) {
+	if (0 == s_memories[memptr]) {
+	    m_index[idxptr] = memptr;
+	    ++idxptr;
+	}
+	++memptr;
+    }
+}
+
+
+memories::memories() {
     m_mptr = -1;
     m_lastByteTime = 0;
     m_memRecording = 0;
@@ -76,25 +78,12 @@ void memories::record_memory(uint8_t m) {
     else {
 	if (13 > m) {
 	    CONFIG_MANAGER_MEM_START_TONES();
-	    // Step, the first.  Find the space to begin recording.  This will only be different if "m" is
-	    // greater than 1 and if m-1 is the same as m.
-	    if (m > 1) {
-		if (m_index[m-2] == m_index[m-1]) {
-		    m_recordPtr = m_index[m-2];
-		    while (0 != s_memories[m_recordPtr]) {
-			++m_recordPtr;
-		    }
-		    ++m_recordPtr; // I'm looking for the character past the last one
-		}
-		else {
-		    m_recordPtr = m_index[m-1];
-		}
-	    }
-	    else {
-		m_recordPtr = 0;
-	    }
+	    // Step, the first.  Find the space to begin recording.  This will be where the current memory begins.
+	    m_recordPtr = m_index[m-1];
 	    if (m_recordPtr < MEMORY_SIZE) {
 		// Step, the second.  I need to move everything above memory "m" to the top of the memory space
+		// Memory 12 is special.  I don't move anything if I'm recording memory m.  That means I have to
+		// figure out the move for memories 1 through 11
 		if (12 > m) {
 		    uint16_t top;
 		    top = m_index[11];

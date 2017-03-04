@@ -5,14 +5,76 @@
 #include "keying.h"
 #include "memories.h"
 
+#include <EEPROM.h>
+
 #include <ctype.h>
 
 config_manager system_config_manager;
+
+#define MAGIC            0x5a0d
+
+#define PADDLES_REVERSE_FLAG    0x01
+#define SIDETONE_OFF_FLAG       0x02
+
+#pragma pack(1)
+typedef struct persistent_config {
+    uint16_t magic;
+    uint16_t size;
+    uint8_t configFlags;
+    uint8_t transmitter;
+#ifdef FEATURE_MEMORIES
+    uint8_t memories[MEMORY_SIZE];
+#endif // FEATURE_MEMORIES
+    uint16_t checksum;
+} persistent_config_t;
+#pragma pack()
 
 void error_tone(void) {
     tone(SIDETONE, 100);
     delay(200);
     noTone(SIDETONE);
+}
+
+static persistent_config_t s_persistentConfig;
+
+// returns TRUE if the checksum has changed
+static bool update_checksum(persistent_config_t *conf) {
+    uint16_t sum = 0;
+    for (size_t i=0; i<((sizeof(persistent_config_t)/2)-1); ++i) {
+	sum += ((uint16_t *)conf)[i];
+    }
+
+    if (~sum != conf->checksum) {
+	conf->checksum = ~sum;
+	return true;
+    }
+    return false;
+}
+
+// returns TRUE if the checksum is valid
+static bool validate_checksum(persistent_config_t *conf) {
+    uint16_t sum = 0;
+    for (size_t i=0; i<(sizeof(persistent_config_t)/2); ++i) {
+	sum += ((uint16_t *)conf)[i];
+    }
+
+    return sum == ~0U;
+}
+
+static void write_eeprom(bool force) {
+    int max_address;
+
+    max_address = sizeof(persistent_config_t);
+
+    if (update_checksum(&s_persistentConfig) || force) {
+
+	// Write the memory, but only if that works
+	for (int i=0; i<max_address; ++i) {
+	    if (EEPROM.read(i) != ((uint8_t *)&s_persistentConfig)[i]) {
+		EEPROM.write(i, ((uint8_t *)&s_persistentConfig)[i]);
+	    }
+	}
+    }
 }
 
 
@@ -24,16 +86,29 @@ void config_manager::process_command(const char *command) {
 	switch(command[0]) {
 	case 'N':
 	    m_paddlesMode = PADDLES_REVERSE();
+	    if (PADDLES_REVERSE_FLAG & s_persistentConfig.configFlags) {
+		s_persistentConfig.configFlags &= ~PADDLES_REVERSE_FLAG;
+	    }
+	    else {
+		s_persistentConfig.configFlags |= PADDLES_REVERSE_FLAG;
+	    }
 	    command_mode(false);
 	    break;
 
 	case 'O':
+	    if (SIDETONE_OFF_FLAG & s_persistentConfig.configFlags) {
+		s_persistentConfig.configFlags &= ~SIDETONE_OFF_FLAG;
+	    }
+	    else {
+		s_persistentConfig.configFlags |= SIDETONE_OFF_FLAG;
+	    }
 	    TOGGLE_SIDETONE_ENABLE();
 	    command_mode(false);
 	    break;
 
 	case '0': case '1': case '2': case '3': case '4':
 	    m_currentXmitter = command[0] - '0';
+	    s_persistentConfig.transmitter = m_currentXmitter;
 	    KEYING_SELECT_TRANSMITTER(m_currentXmitter);
 	    command_mode(false);
 	    break;
@@ -86,20 +161,51 @@ void config_manager::memory_end_tones(void) {
 }
 
 void config_manager::command_mode(bool is_in_command_mode) {
-    m_isInCommandMode = is_in_command_mode;
-    DISPLAY_MANAGER_PROG_MODE(m_isInCommandMode);
-    KEYING_COMMAND_MODE(m_isInCommandMode);
     if (is_in_command_mode) {
 	two_beeps(true, false);
     }
     else {
-	two_beeps(false, true);
+	if (m_isInCommandMode) {
+	    two_beeps(false, true);
+	}
 
 	RECORD_MEMORY(0);
 	m_processing = false;
+	write_eeprom(false);
     }
+    m_isInCommandMode = is_in_command_mode;
+    DISPLAY_MANAGER_PROG_MODE(m_isInCommandMode);
+    KEYING_COMMAND_MODE(m_isInCommandMode);
 }
 
 
 void config_manager_initialize(void) {
+    // Attempt to read the config from the EEPROM
+    int max_address;
+
+    max_address = sizeof(persistent_config_t);
+
+    for (int i=0; i<max_address; ++i) {
+	((uint8_t *)&s_persistentConfig)[i] = EEPROM.read(i);
+    }
+    // If the magic is right, the size is right, and the checksum is right, then I'm good, otherwise initialize
+    if ((MAGIC != s_persistentConfig.magic) ||
+	(s_persistentConfig.size != sizeof(s_persistentConfig)) ||
+	!validate_checksum(&s_persistentConfig)) {
+	memset(&s_persistentConfig, 0, sizeof(s_persistentConfig));
+	s_persistentConfig.magic = MAGIC;
+	s_persistentConfig.size = sizeof(s_persistentConfig);
+	s_persistentConfig.transmitter = 1;
+	write_eeprom(true);
+    }
+
+    //
+    MEMORIES_CONFIG(s_persistentConfig.memories);
+    if (s_persistentConfig.configFlags & PADDLES_REVERSE_FLAG) {
+	PADDLES_REVERSE();
+    }
+    if (s_persistentConfig.configFlags & SIDETONE_OFF_FLAG) {
+	TOGGLE_SIDETONE_ENABLE();
+    }
+    KEYING_SELECT_TRANSMITTER(s_persistentConfig.transmitter);
 }

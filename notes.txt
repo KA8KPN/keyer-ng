@@ -220,9 +220,9 @@ DONE)  Eliminate the raspberry at startup.  And the one after every word.
 
 DONE) Fix the configuration stuff through the PS/2 keyboard.  I'm not doing control characters properly.  Initially, I'll use ctrl-n and ctrl-o only.  I'll flesh it out later.  Ctrl-n is 175 through K3NG's keyboard, and ctrl-o is 176, that's 257 and 260 in octal, and I'm going to call those commands 0 and 1.
 
-Make runtime configurations persistent as a feature
+DONE) Make runtime configurations persistent as a feature
 
-Fix the audio prompting for command mode.
+DONE Fix the audio prompting for command mode.
 
 Fix the memory recording from the keyboard.
 
