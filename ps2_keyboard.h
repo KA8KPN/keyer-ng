@@ -20,10 +20,10 @@ public:
 private:
 };
 
-extern ps2_keyboard *system_ps2_keyboard;
+extern ps2_keyboard system_ps2_keyboard;
 void ps2_keyboard_initialize(void);
 #define PS2_KEYBOARD_INITIALIZE() ps2_keyboard_initialize()
-#define PS2_KEYBOARD_UPDATE()     system_ps2_keyboard->update()
+#define PS2_KEYBOARD_UPDATE()     system_ps2_keyboard.update()
 #else // !FEATURE_PS2_KEYBOARD
 #define PS2_KEYBOARD_INITIALIZE()
 #define PS2_KEYBOARD_UPDATE()

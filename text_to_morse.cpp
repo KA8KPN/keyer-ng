@@ -9,6 +9,12 @@
 #include "config_manager.h"
 #include "display.h"
 
+
+static const char *command_table[] = {
+    "N",
+    "O"
+};
+
 text_to_morse system_ttm;
 
 void text_to_morse_initialize(void) {
@@ -74,7 +80,7 @@ input_mode_t text_to_morse::update(unsigned long now, input_mode_t mode) {
 		DISPLAY_MANAGER_SCROLLING_TEXT(c);
 	    }
 	    else if (0xe000 == (0xf000 & z)) {
-		CONFIG_MANAGER_PROCESS_COMMAND(0x0fff & z);
+		CONFIG_MANAGER_PROCESS_COMMAND(command_table[0x0fff & z]);
 	    }
 	}
     }

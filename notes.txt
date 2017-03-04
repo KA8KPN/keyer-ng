@@ -218,13 +218,13 @@ DONE)  Figure out how to better do the morse tables so that there aren't remnant
 
 DONE)  Eliminate the raspberry at startup.  And the one after every word.
 
-Fix the configuration stuff through the PS/2 keyboard.  I'm not doing control characters properly.
+DONE) Fix the configuration stuff through the PS/2 keyboard.  I'm not doing control characters properly.  Initially, I'll use ctrl-n and ctrl-o only.  I'll flesh it out later.  Ctrl-n is 175 through K3NG's keyboard, and ctrl-o is 176, that's 257 and 260 in octal, and I'm going to call those commands 0 and 1.
 
 Make runtime configurations persistent as a feature
 
 Add a serial number capability to the memorized messages.
 
-Use the backslash as an keyboard command escape key.
+Use the backslash as a serial command escape key.
 
 Make the commands a superset of K3NG's.
 

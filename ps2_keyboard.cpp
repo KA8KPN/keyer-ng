@@ -7,13 +7,11 @@
 #include "ps2_keyboard.h"
 
 static PS2Keyboard keyboard;
-ps2_keyboard *system_ps2_keyboard = NULL;
+ps2_keyboard system_ps2_keyboard;
 
 void ps2_keyboard_initialize(void) {
     keyboard.begin(KBD_DATA, KBD_IRQ);
-    system_ps2_keyboard = new ps2_keyboard;
 }
-
 
 ps2_keyboard::ps2_keyboard(void) {
 }
