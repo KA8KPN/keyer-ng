@@ -222,6 +222,10 @@ DONE) Fix the configuration stuff through the PS/2 keyboard.  I'm not doing cont
 
 Make runtime configurations persistent as a feature
 
+Fix the audio prompting for command mode.
+
+Fix the memory recording from the keyboard.
+
 Add a serial number capability to the memorized messages.
 
 Use the backslash as a serial command escape key.
