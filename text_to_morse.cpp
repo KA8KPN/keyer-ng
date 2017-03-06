@@ -5,6 +5,7 @@
 #include "Arduino.h"
 
 #include "text_to_morse.h"
+#include "morse_to_text.h"
 #include "morse_tables.h"
 #include "config_manager.h"
 #include "display.h"
@@ -27,35 +28,42 @@ text_to_morse::text_to_morse() {
     m_nextStateTransitionMs = 100 + millis();
     m_bPtr = 0;
     m_ePtr = 0;
+    m_inWordSpace = false;
 }
 
 input_mode_t text_to_morse::update(unsigned long now, input_mode_t mode) {
     if (now >= m_nextStateTransitionMs) {
 	if (MODE_KEYBOARD == mode) {
-	    unsigned ptt_delay;
-	    if (KEY_UP == m_keyerState) {
-		ptt_delay = TRANSMITTER_KEY_DOWN();
-		if (1 & m_kbdBit) {
-		    m_keyerState = KEY_DAH;
-		    m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + ptt_delay;
+	    if (!m_inWordSpace) {
+		unsigned ptt_delay;
+		if (KEY_UP == m_keyerState) {
+		    ptt_delay = TRANSMITTER_KEY_DOWN();
+		    if (1 & m_kbdBit) {
+			m_keyerState = KEY_DAH;
+			m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + ptt_delay;
+		    }
+		    else {
+			m_keyerState = KEY_DIT;
+			m_nextStateTransitionMs = now + WPM_DOT_TWITCHES() + ptt_delay;
+		    }
 		}
 		else {
-		    m_keyerState = KEY_DIT;
-		    m_nextStateTransitionMs = now + WPM_DOT_TWITCHES() + ptt_delay;
+		    TRANSMITTER_KEY_UP();
+		    m_keyerState = KEY_UP;
+		    --m_kbdCount;
+		    if (m_kbdCount > 0) {
+			m_kbdBit >>= 1;
+			m_nextStateTransitionMs = now + WPM_DOT_TWITCHES();
+		    }
+		    else {
+			m_nextStateTransitionMs = now + WPM_DASH_TWITCHES();
+			mode = CONFIG_MANAGER_PADDLES_MODE();
+		    }
 		}
 	    }
 	    else {
-		TRANSMITTER_KEY_UP();
-		m_keyerState = KEY_UP;
-		--m_kbdCount;
-		if (m_kbdCount > 0) {
-		    m_kbdBit >>= 1;
-		    m_nextStateTransitionMs = now + WPM_DOT_TWITCHES();
-		}
-		else {
-		    m_nextStateTransitionMs = now + WPM_DASH_TWITCHES();
-		    mode = CONFIG_MANAGER_PADDLES_MODE();
-		}
+		m_inWordSpace = false;
+		mode = CONFIG_MANAGER_PADDLES_MODE();
 	    }
 	}
     }
@@ -67,9 +75,10 @@ input_mode_t text_to_morse::update(unsigned long now, input_mode_t mode) {
 	    if (0xd000 == z) {
 		mode = MODE_KEYBOARD;
 		DISPLAY_MANAGER_INPUT_SOURCE(mode, 0);
-		m_keyerState = KEY_DAH;
+		m_keyerState = KEY_UP;
 		m_kbdCount = 1;
 		m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + WPM_DOT_TWITCHES();
+		m_inWordSpace = true;
 		DISPLAY_MANAGER_SCROLLING_TEXT(' ');
 	    }
 	    else if (0xd000 > z) {

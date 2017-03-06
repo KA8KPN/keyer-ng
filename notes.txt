@@ -222,14 +222,18 @@ DONE) Fix the configuration stuff through the PS/2 keyboard.  I'm not doing cont
 
 DONE) Make runtime configurations persistent as a feature
 
-DONE Fix the audio prompting for command mode.
+DONE) Fix the audio prompting for command mode.
 
-Fix the memory recording from the keyboard.
+DONE) Fix the memory recording from the keyboard.
+
+Do something better for the serial debugging.  Like allow selective logging out the serial port that is completely removed when SERIAL_DEBUG is removed.  Or, at least cause compile errors when I leave logging stuff in.
+
+Provide for the override of the serial speed which I need because the speed pot is flaky.
 
 Add a serial number capability to the memorized messages.
 
 Use the backslash as a serial command escape key.
 
-Make the commands a superset of K3NG's.
+Make the commands more like K3NG's.  (Like what?)
 
 Update the morse_table_builder.c to build tables to build precisely the tables that are needed instead of requiring hand rework.

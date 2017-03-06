@@ -25,6 +25,7 @@ private:
     uint8_t m_kbdBit, m_kbdCount;
     char m_buffer[128];
     uint8_t m_bPtr, m_ePtr;
+    bool m_inWordSpace;
 };
 extern text_to_morse system_ttm;
 void text_to_morse_initialize(void);

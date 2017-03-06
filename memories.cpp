@@ -134,7 +134,7 @@ void memories::record_element(bool is_key_down) {
 	    if (0 != m_lastByteTime) {
 		unsigned long diff;
 		diff = (WPM_TWITCHES()/2 + now - m_lastByteTime) / WPM_TWITCHES();
-		while ((0 < m_bytesFree) && (diff > 63)) {
+		while ((0 < m_bytesFree) && (diff > 62)) {
 		    s_memories[m_recordPtr++] = 0xbf;
 		    --m_bytesFree;
 		    diff -= 63;
@@ -149,7 +149,7 @@ void memories::record_element(bool is_key_down) {
 	    // Was down, now it's up.  Record the time that the key was down.
 	    unsigned long diff;
 	    diff = (WPM_TWITCHES()/2 + now - m_lastByteTime) / WPM_TWITCHES();
-	    while ((0 < m_bytesFree) && (diff > 63)) {
+	    while ((0 < m_bytesFree) && (diff > 62)) {
 		s_memories[m_recordPtr++] = 0xff;
 		--m_bytesFree;
 		diff -= 63;
