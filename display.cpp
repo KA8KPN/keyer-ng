@@ -19,8 +19,8 @@
 #define PROG_MODE_WIDTH 4
 
 #define SPEED_ROW 0
-#define SPEED_COL 15
-#define SPEED_WIDTH 5
+#define SPEED_COL 14
+#define SPEED_WIDTH 6
 
 #define XMITTER_ROW 1
 #define XMITTER_COL 0
@@ -185,11 +185,15 @@ void display::prog_mode(bool is_in_prog_mode) {
 }
 
 
-void display::wpm(int wpm) {
+void display::wpm(int wpm, char c) {
     char buffer[10];
 
     m_display->setCursor(SPEED_COL, SPEED_ROW);
+#ifdef DISPLAY_LARGE
+    sprintf(buffer, "%2dwpm%c", wpm, c);
+#else // ! DISPLAY_LARGE
     sprintf(buffer, "%2dwpm", wpm);
+#endif // ! DISPLAY_LARGE
     m_display->write((const uint8_t*) buffer, SPEED_WIDTH);
 }
 

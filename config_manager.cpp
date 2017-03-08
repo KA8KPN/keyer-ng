@@ -4,6 +4,7 @@
 #include "display.h"
 #include "keying.h"
 #include "memories.h"
+#include "wpm.h"
 
 #include <EEPROM.h>
 
@@ -25,6 +26,9 @@ typedef struct persistent_config {
 #ifdef FEATURE_MEMORIES
     uint8_t memories[MEMORY_SIZE];
 #endif // FEATURE_MEMORIES
+#ifdef FEATURE_SPEED_CONTROL
+    int wpm_offset;
+#endif // FEATURE_SPEED_CONTROL
     uint16_t checksum;
 } persistent_config_t;
 #pragma pack()
@@ -170,6 +174,7 @@ void config_manager::command_mode(bool is_in_command_mode) {
 	}
 
 	RECORD_MEMORY(0);
+	s_persistentConfig.wpm_offset = WPM_GET_OFFSET();
 	m_processing = false;
 	write_eeprom(false);
     }
@@ -206,6 +211,9 @@ void config_manager_initialize(void) {
     }
     if (s_persistentConfig.configFlags & SIDETONE_OFF_FLAG) {
 	TOGGLE_SIDETONE_ENABLE();
+    }
+    if (0 != s_persistentConfig.wpm_offset) {
+	WPM_SET_OFFSET(s_persistentConfig.wpm_offset);
     }
     KEYING_SELECT_TRANSMITTER(s_persistentConfig.transmitter);
 }

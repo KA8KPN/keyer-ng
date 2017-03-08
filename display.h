@@ -13,7 +13,7 @@ public:
     display(void);
     void init(void);
     void key_mode(keyer_mode_t mode);
-    void wpm(int wpm);
+    void wpm(int wpm, char c);
     void xmit_mode(int xmitter);
     void input_source(input_mode_t mode, uint8_t which);
     void scrolling_text(char c);
@@ -32,7 +32,7 @@ extern display *system_display_manager;
 void display_manager_initialize(void);
 #define DISPLAY_MANAGER_INITIALIZE()            display_manager_initialize()
 #define DISPLAY_MANAGER_KEY_MODE(mode)          system_display_manager->key_mode(mode)
-#define DISPLAY_MANAGER_WPM(wpm)                system_display_manager->wpm(wpm)
+#define DISPLAY_MANAGER_WPM(wpm, c)             system_display_manager->wpm(wpm, c)
 #define DISPLAY_MANAGER_XMIT_MODE(xmitter)      system_display_manager->xmit_mode(xmitter)
 #define DISPLAY_MANAGER_INPUT_SOURCE(source, w) system_display_manager->input_source(source, w)
 #define DISPLAY_MANAGER_SCROLLING_TEXT(c)       system_display_manager->scrolling_text(c)
@@ -43,7 +43,7 @@ void display_manager_initialize(void);
 #else // !LCD_DISPLAY
 #define DISPLAY_MANAGER_INITIALIZE()
 #define DISPLAY_MANAGER_KEY_MODE(mode)          ((void)mode)
-#define DISPLAY_MANAGER_WPM(wpm)                ((void)wpm)
+#define DISPLAY_MANAGER_WPM(wpm, c)             ((void)wpm, c)
 #define DISPLAY_MANAGER_XMIT_MODE(xmitter)      ((void)xmitter)
 #define DISPLAY_MANAGER_INPUT_SOURCE(source, w) ((void)source,w)
 #define DISPLAY_MANAGER_SCROLLING_TEXT(c)       ((void)c)

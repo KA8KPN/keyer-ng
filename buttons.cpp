@@ -57,9 +57,48 @@ void buttons::update(void) {
                 CONFIG_MANAGER_SET_COMMAND_MODE(!CONFIG_MANAGER_GET_COMMAND_MODE());
 		break;
 
-	    case 1: case 2: case 3: case 4:  case 5:  case 6:
-	    case 7: case 8: case 9: case 10: case 11: case 12:
+	    case 1: case 2: case 3: case 4:
 		PLAY_MEMORY(button);
+		break;
+
+	    case 5:
+		if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
+		    WPM_MAKE_FASTER(5);
+		}
+		else {
+		    PLAY_MEMORY(button);
+		}
+		break;
+
+	    case 6:
+		if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
+		    WPM_MAKE_FASTER(1);
+		}
+		else {
+		    PLAY_MEMORY(button);
+		}
+		break;
+
+	    case 7: case 8: case 9: case 10:
+		PLAY_MEMORY(button);
+		break;
+
+	    case 11:
+		if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
+		    WPM_MAKE_SLOWER(5);
+		}
+		else {
+		    PLAY_MEMORY(button);
+		}
+		break;
+
+	    case 12:
+		if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
+		    WPM_MAKE_SLOWER(1);
+		}
+		else {
+		    PLAY_MEMORY(button);
+		}
 		break;
 
 	    default:
