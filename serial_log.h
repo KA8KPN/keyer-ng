@@ -7,6 +7,8 @@
 
 void serial_debug_initialize(void);
 
+int serial_log(const char *format, ...);
+
 #define SERIAL_DEBUG_INITIALIZE() serial_debug_initialize()
 #else // ! FEATURE_SERIAL_DEBUG
 #define SERIAL_DEBUG_INITIALIZE()

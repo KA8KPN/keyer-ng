@@ -26,4 +26,6 @@
 #error "MUST NOT define both FEATURE_SERIAL_INPUT and FEATURE_SERIAL_DEBUG"
 #endif
 
+#include "serial_log.h"
+
 #endif // OPTIONS_H_INCLUDED

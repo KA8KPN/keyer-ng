@@ -173,6 +173,7 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 	m_nextByteTime = now-1;
     }
     if ((MODE_MEMORY == mode) && (m_nextByteTime < now)) {
+	// serial_log("s_memories[%d] = %#02x\r\n", m_mptr, s_memories[m_mptr]);
 	switch (s_memories[m_mptr] >> 6) {
 	case 2:
 	    m_nextByteTime = now + WPM_TWITCHES() * (0x3f & s_memories[m_mptr]);

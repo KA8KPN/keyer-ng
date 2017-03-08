@@ -12,7 +12,6 @@
 #include "buttons.h"
 #include "config_manager.h"
 #include "memories.h"
-#include "serial_debug.h"
 
 #include "keyer.h"
 
