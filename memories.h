@@ -22,6 +22,7 @@ public:
     // record_memory(0) means stop recording
     void record_memory(uint8_t which_memory_to_record);
     void record_element(bool is_key_down);
+    void record_special_element(uint8_t macro_number);
     void config(uint8_t *memories);
 
 private:
@@ -33,6 +34,8 @@ private:
     uint8_t m_memRecording;
     uint16_t m_bytesFree;
     uint16_t m_recordPtr;
+    uint16_t m_beginningOfWord;
+    bool     m_longPause;
 };
 
 extern memories system_memories;
@@ -43,12 +46,14 @@ extern memories system_memories;
 #define PLAY_MEMORY(n)        system_memories.play_memory(n)
 #define RECORD_MEMORY(n)      system_memories.record_memory(n)
 #define RECORD_ELEMENT(is_key_down) system_memories.record_element(is_key_down)
+#define RECORD_SPECIAL_ELEMENT(macro)         system_memories.record_element(macro)
 #else // ! FEATURE_MEMORIES
 #define MEMORIES_INITIALIZE()
 #define MEMORIES_UPDATE(now, keyer_mode) CONFIG_MANAGER_PADDLES_MODE()
 #define PLAY_MEMORY(n)        ((void) n)
 #define RECORD_MEMORY(n)        ((void) n)
 #define RECORD_ELEMENT(is_key_up) ((void)is_key_down)
+#define RECORD_SPECIAL_ELEMENT(macro) ((void)macro)
 #define MEMORIES_CONFIG(memories) ((void)memories)
 #endif // ! FEATURE_MEMORIES
 

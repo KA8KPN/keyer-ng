@@ -230,7 +230,7 @@ DONE)  Do something better for the serial debugging.  Like allow selective loggi
 
 DONE)  Provide for the override of the serial speed which I need because the speed pot is flaky.  I've decided that should work this way:  I will use four buttons to alter the speed.  One button will be +5WPM, one +1 WPM, one -5 WPM, and one -1 WPM.  This quantity will be added to the value read from the pot, but won't go outside a specified range.  The buttons will be (in the order I gave) 5, 6, 11, and 12.  I will put a "+" or "-" after "WPM" to indicate that it's modified by the keys, and I will save the offset value into EEPROM.
 
-Update the morse_table_builder.c to build tables to build precisely the tables that are needed instead of requiring hand rework.  That will require defining something for dealing with the mapping of command numbers to key values.  I need this so I can easily add backslashes to the morse tables, useful for the addition of memory macros.
+DONE)  Update the morse_table_builder.c to build tables to build precisely the tables that are needed instead of requiring hand rework.  That will require defining something for dealing with the mapping of command numbers to key values.  I need this so I can easily add backslashes to the morse tables, useful for the addition of memory macros.
 
 Add a serial number capability to the memorized messages.  Okay, the way that memory macros work in K3NG's keyer is they're preceeded by backslashes and backslashes are six dashes.  The three I want to implement first are \c, \e, and \n, which are "play serial number with cut numbers", "play serial number, then increment", and "decrement serial number, but don't play it."
 
@@ -246,3 +246,4 @@ Allow for adjusting the serial number with a buttons in command mode.  That's pr
 
 Implement the other paddle modes.  Mode-B, ultimatic, semiautomatic, and straight.  I want to subclass the paddles class, probably.  Figure this out later.
 
+I don't have to make the keyboard actions take effect through the text-to-morse and morse-to-text logic.  I should be able to just do whatever it is or record memories directly from the keyboard/serial logic and not have to play the morse through the speaker before things happen.

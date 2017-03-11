@@ -37,6 +37,7 @@ memories::memories() {
     m_lastByteTime = 0;
     m_memRecording = 0;
     m_bytesFree = 0;
+    m_longPause = false;
 }
 
 
@@ -114,6 +115,8 @@ void memories::record_memory(uint8_t m) {
     }
     m_lastByteTime = 0;
     m_memRecording = m;
+    m_longPause = true;
+    m_beginningOfWord = m_recordPtr;
 }
 
 void memories::record_element(bool is_key_down) {
@@ -134,6 +137,12 @@ void memories::record_element(bool is_key_down) {
 	    if (0 != m_lastByteTime) {
 		unsigned long diff;
 		diff = (WPM_TWITCHES()/2 + now - m_lastByteTime) / WPM_TWITCHES();
+		// If it's a word pause, then a macro may come next.  This code knows from nothing detecting macros
+		// but I need to record the fact that I have a long pause so that I can mark the place that comes
+		// immediately after the long pause
+		if (diff > 20) {
+		    m_longPause = true;
+		}
 		while ((0 < m_bytesFree) && (diff > 62)) {
 		    s_memories[m_recordPtr++] = 0xbf;
 		    --m_bytesFree;
@@ -148,6 +157,10 @@ void memories::record_element(bool is_key_down) {
 	else {
 	    // Was down, now it's up.  Record the time that the key was down.
 	    unsigned long diff;
+	    if (m_longPause) {
+		m_longPause = false;
+		m_beginningOfWord = m_recordPtr;
+	    }
 	    diff = (WPM_TWITCHES()/2 + now - m_lastByteTime) / WPM_TWITCHES();
 	    while ((0 < m_bytesFree) && (diff > 62)) {
 		s_memories[m_recordPtr++] = 0xff;
@@ -165,6 +178,12 @@ void memories::record_element(bool is_key_down) {
     DISPLAY_MANAGER_NUMBER(m_bytesFree);
 }
 
+
+void memories::record_special_element(uint8_t macro_number) {
+    m_bytesFree += m_recordPtr - m_beginningOfWord;
+    s_memories[m_beginningOfWord] = 0x40 | (0x3f & macro_number);
+    m_recordPtr = m_beginningOfWord + 1;
+}
 
 input_mode_t memories::update(unsigned long now, input_mode_t mode) {
     if ((MODE_MEMORY != mode) && (-1 < m_mptr)) {
@@ -196,6 +215,10 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 	    }
 	    m_nextByteTime = now + WPM_TWITCHES() * (0x3f & s_memories[m_mptr]) + TRANSMITTER_KEY_DOWN();
 	    m_mptr++;
+	    break;
+
+	case 1:
+	    // Invoke the macro.  Ummm, how do I do that?
 	    break;
 
 	default:
