@@ -37,6 +37,10 @@ typedef struct {
     int links[2];
 } morse_decode_t;
 
+typedef struct {
+    int c;
+    int macro;
+} keyboard_macros_t;
 
 input_t inputs[] = {
     {'A', ALSO_LOWERCASE_FLAG, "dD"},
@@ -93,11 +97,17 @@ input_t inputs[] = {
     {'_', 0, "ddDDdD"},
     {'"', 0, "dDddDd"},
     {'$', 0, "dddDddD"},
-    {'@', 0, "dDDdDd"}
+    {'@', 0, "dDDdDd"},
+    {'\\', 0, "DDDDDD"}  // Something that Anthony Good has defined, so I will use it, too.
 //  {512, 0, "dddDdD"}, // Prosign SK
 //  {513, 0, "dddddddd"}, // Error
 //  {514, 0, "DdDdD"}, // WTF?  "Starting Signal"  according to Wikipedia
 //  {515, 0, "dddDd"}, // WTF?  "Understood" according to Wikipedia
+};
+
+keyboard_macros_t macros[] = {
+    {0257, 0},
+    {0260, 1}
 };
 
 
@@ -196,6 +206,14 @@ int main(int argc, char **argv) {
 	}
     }
 
+    for (i=0; i<((sizeof(macros)/sizeof(keyboard_macros_t))); ++i) {
+	if (0 != outputs[macros[i].c]) {
+	    fprintf(stderr, "Keyboard macro %d (keycode %d) is defined as both a regular character and a\nspecial character using the regular character\n", i, macros[i].c);
+	}
+	else {
+	    outputs[macros[i].c] = 0xe000 | macros[i].macro;
+	}
+    }
     puts("#ifdef FEATURE_TEXT_TO_MORSE");
     puts("// The most significant four bits holds a count of the sounds made");
     puts("// The bottom 12 bits hold a bitmap of the length of the sounds, with the");
