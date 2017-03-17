@@ -140,7 +140,8 @@ void memories::record_element(bool is_key_down) {
 		// If it's a word pause, then a macro may come next.  This code knows from nothing detecting macros
 		// but I need to record the fact that I have a long pause so that I can mark the place that comes
 		// immediately after the long pause
-		if (diff > 20) {
+		// serial_log("Diff is %lu\r\n", diff);
+		if (diff > 70) {
 		    m_longPause = true;
 		}
 		while ((0 < m_bytesFree) && (diff > 62)) {
@@ -180,6 +181,7 @@ void memories::record_element(bool is_key_down) {
 
 
 void memories::record_special_element(uint8_t macro_number) {
+    // serial_log("The macro number is %#02x, m_recordPtr = %d, m_beginningOfWord = %d\r\n", macro_number, m_recordPtr, m_beginningOfWord);
     m_bytesFree += m_recordPtr - m_beginningOfWord;
     s_memories[m_beginningOfWord] = 0x40 | (0x3f & macro_number);
     m_recordPtr = m_beginningOfWord + 1;
@@ -219,6 +221,7 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 
 	case 1:
 	    // Invoke the macro.  Ummm, how do I do that?
+	    m_mptr++;
 	    break;
 
 	default:

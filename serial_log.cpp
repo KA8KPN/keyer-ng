@@ -1,11 +1,11 @@
 #include "options.h"
 
-#ifdef FEATURE_SERIAL_DEBUG
+#ifdef FEATURE_SERIAL_LOG
 
 #include "Arduino.h"
 #include <stdarg.h>
 
-void serial_debug_initialize(void) {
+void serial_log_initialize(void) {
     delay(1000);
     Serial.begin(115200);
     while (!Serial) {
@@ -25,4 +25,4 @@ int serial_log(const char *format, ...) {
     return result;
 }
 
-#endif // FEATURE_SERIAL_DEBUG
+#endif // FEATURE_SERIAL_LOG

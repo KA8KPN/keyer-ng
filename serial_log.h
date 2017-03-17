@@ -1,17 +1,17 @@
-#ifndef SERIAL_DEBUG_H_INCLUDED
-#define SERIAL_DEBUG_H_INCLUDED
+#ifndef SERIAL_LOG_H_INCLUDED
+#define SERIAL_LOG_H_INCLUDED
 
 #include "options.h"
 
-#ifdef FEATURE_SERIAL_DEBUG
+#ifdef FEATURE_SERIAL_LOG
 
-void serial_debug_initialize(void);
+void serial_log_initialize(void);
 
 int serial_log(const char *format, ...);
 
-#define SERIAL_DEBUG_INITIALIZE() serial_debug_initialize()
-#else // ! FEATURE_SERIAL_DEBUG
-#define SERIAL_DEBUG_INITIALIZE()
-#endif // ! FEATURE_SERIAL_DEBUG
+#define SERIAL_LOG_INITIALIZE() serial_log_initialize()
+#else // ! FEATURE_SERIAL_LOG
+#define SERIAL_LOG_INITIALIZE()
+#endif // ! FEATURE_SERIAL_LOG
 
-#endif // SERIAL_DEBUG_H_INCLUDED
+#endif // SERIAL_LOG_H_INCLUDED

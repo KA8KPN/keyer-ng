@@ -24,6 +24,7 @@ public:
     void record_element(bool is_key_down);
     void record_special_element(uint8_t macro_number);
     void config(uint8_t *memories);
+    bool is_recording(void) const { return 0 != m_memRecording; }
 
 private:
     uint16_t m_index[MAX_MEMORIES];
@@ -46,7 +47,8 @@ extern memories system_memories;
 #define PLAY_MEMORY(n)        system_memories.play_memory(n)
 #define RECORD_MEMORY(n)      system_memories.record_memory(n)
 #define RECORD_ELEMENT(is_key_down) system_memories.record_element(is_key_down)
-#define RECORD_SPECIAL_ELEMENT(macro)         system_memories.record_element(macro)
+#define RECORD_SPECIAL_ELEMENT(macro)         system_memories.record_special_element(macro)
+#define MEMORY_RECORDING()                    system_memories.is_recording()
 #else // ! FEATURE_MEMORIES
 #define MEMORIES_INITIALIZE()
 #define MEMORIES_UPDATE(now, keyer_mode) CONFIG_MANAGER_PADDLES_MODE()
@@ -55,6 +57,7 @@ extern memories system_memories;
 #define RECORD_ELEMENT(is_key_up) ((void)is_key_down)
 #define RECORD_SPECIAL_ELEMENT(macro) ((void)macro)
 #define MEMORIES_CONFIG(memories) ((void)memories)
+#define MEMORY_RECORDING()                    (false)
 #endif // ! FEATURE_MEMORIES
 
 #endif // MEMORIES_H_INCLUDED

@@ -109,7 +109,7 @@ input_mode_t paddles::update(unsigned long now, input_mode_t input_mode) {
 		    MORSE_TO_TEXT_UPDATE(CharSpace);
 		    input_mode = m_paddleMode;
 		    if (0 == m_addSpaceMs) {
-			m_addSpaceMs = now + WPM_DASH_TWITCHES();
+			m_addSpaceMs = now + WPM_WORD_TWITCHES();
 		    }
 		}
 		else {

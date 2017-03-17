@@ -32,7 +32,7 @@ void setup () {
     PS2_KEYBOARD_INITIALIZE();
     BUTTONS_INITIALIZE();
     MEMORIES_INITIALIZE();
-    SERIAL_DEBUG_INITIALIZE();
+    SERIAL_LOG_INITIALIZE();
     CONFIG_MANAGER_INITIALIZE();  // This needs to be after all the configurable options
 }
 
