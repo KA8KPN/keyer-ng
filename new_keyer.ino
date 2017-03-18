@@ -12,6 +12,7 @@
 #include "buttons.h"
 #include "config_manager.h"
 #include "memories.h"
+#include "serial_num.h"
 
 #include "keyer.h"
 
@@ -33,6 +34,7 @@ void setup () {
     BUTTONS_INITIALIZE();
     MEMORIES_INITIALIZE();
     SERIAL_LOG_INITIALIZE();
+    SERIAL_NUM_INITIALIZE();
     CONFIG_MANAGER_INITIALIZE();  // This needs to be after all the configurable options
 }
 

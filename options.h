@@ -12,18 +12,23 @@
 #define FEATURE_SPEED_CONTROL
 #define FEATURE_BUTTONS
 #define FEATURE_MEMORIES
+#define FEATURE_SERIAL_NUMBER
 
 #if defined(DISPLAY_LARGE) || defined(DISPLAY_SMALL)
 #define LCD_DISPLAY
 #define FEATURE_MORSE_TO_TEXT
 #endif // DISPLAY_LARGE .or. DISPLAY_SMALL
 
-#if defined(FEATURE_SERIAL_INPUT) || defined(FEATURE_PS2_KEYBOARD)
+#if defined(FEATURE_SERIAL_INPUT) || defined(FEATURE_PS2_KEYBOARD) || defined(FEATURE_SERIAL_NUMBER)
 #define FEATURE_TEXT_TO_MORSE
 #endif
 
 #if defined(FEATURE_SERIAL_INPUT) && defined(FEATURE_SERIAL_DEBUG)
 #error "MUST NOT define both FEATURE_SERIAL_INPUT and FEATURE_SERIAL_DEBUG"
+#endif
+
+#if defined(FEATURE_SERIAL_NUMBER) && !defined(FEATURE_MEMORIES)
+#error "MUST define FEATURE_MEMORIES if FEATURE_SERIAL_NUM is defined"
 #endif
 
 #include "serial_log.h"

@@ -8,6 +8,7 @@
 #include "wpm.h"
 #include "display.h"
 #include "morse_to_text.h"
+#include "serial_num.h"
 
 memories system_memories;
 
@@ -141,7 +142,7 @@ void memories::record_element(bool is_key_down) {
 		// but I need to record the fact that I have a long pause so that I can mark the place that comes
 		// immediately after the long pause
 		// serial_log("Diff is %lu\r\n", diff);
-		if (diff > 70) {
+		if (diff > 60) {
 		    m_longPause = true;
 		}
 		while ((0 < m_bytesFree) && (diff > 62)) {
@@ -221,7 +222,9 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 
 	case 1:
 	    // Invoke the macro.  Ummm, how do I do that?
-	    m_mptr++;
+	    if (SERIAL_NUM_UPDATE(now, 0x3f & s_memories[m_mptr])) {
+		m_mptr++;
+	    }
 	    break;
 
 	default:
