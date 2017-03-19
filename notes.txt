@@ -232,9 +232,9 @@ DONE)  Provide for the override of the serial speed which I need because the spe
 
 DONE)  Update the morse_table_builder.c to build tables to build precisely the tables that are needed instead of requiring hand rework.  That will require defining something for dealing with the mapping of command numbers to key values.  I need this so I can easily add backslashes to the morse tables, useful for the addition of memory macros.
 
-Add a serial number capability to the memorized messages.  Okay, the way that memory macros work in K3NG's keyer is they're preceeded by backslashes and backslashes are six dashes.  The three I want to implement first are \c, \e, and \n, which are "play serial number with cut numbers", "play serial number, then increment", and "decrement serial number, but don't play it."
+DONE) Add a serial number capability to the memorized messages.  Okay, the way that memory macros work in K3NG's keyer is they're preceeded by backslashes and backslashes are six dashes.  The three I want to implement first are \c, \e, and \n, which are "play serial number with cut numbers", "play serial number, then increment", and "decrement serial number, but don't play it."
 
-Use the backslash as a serial command escape key.  How do I indicate in the recording that I want the serial number there?  Display the serial number in the display field for it, maybe with prefix "SN".
+DONE) Use the backslash as a serial command escape key.  How do I indicate in the recording that I want the serial number there?  Display the serial number in the display field for it, maybe with prefix "SN".
 
 Figure out out to compile the source using the IDE.  Confirm it compiles under Windows.
 
@@ -242,7 +242,7 @@ Publish the source and make an announcement.
 
 Make the commands more like K3NG's.  (Like what?)
 
-Allow for adjusting the serial number with a buttons in command mode.  That's provided for.  I can have a memory with nothing but a decrement.  So, I don't need that, I don't think.
+DONE) Allow for adjusting the serial number with a buttons in command mode.  That's provided for.  I can have a memory with nothing but a decrement.  So, I don't need that, I don't think.
 
 Implement the other paddle modes.  Mode-B, ultimatic, semiautomatic, and straight.  I want to subclass the paddles class, probably.  Figure this out later.
 
