@@ -6,6 +6,7 @@
 
 #include "serial_num.h"
 #include "morse_tables.h"
+#include "morse_to_text.h"
 
 serial_num system_serial_num;
 
@@ -73,10 +74,12 @@ bool serial_num::update(unsigned long now, uint8_t m) {
 		if (1 & m_charBit) {
 		    m_keyerState = KEY_DAH;
 		    m_nextStateTransitionMs = now + WPM_DASH_TWITCHES() + ptt_delay;
+		    MORSE_TO_TEXT_UPDATE(Dah);
 		}
 		else {
 		    m_keyerState = KEY_DIT;
 		    m_nextStateTransitionMs = now + WPM_DOT_TWITCHES() + ptt_delay;
+		    MORSE_TO_TEXT_UPDATE(Dit);
 		}
 	    }
 	    else {
@@ -89,6 +92,7 @@ bool serial_num::update(unsigned long now, uint8_t m) {
 		}
 		else {
 		    m_nextStateTransitionMs = now + WPM_DASH_TWITCHES();
+		    MORSE_TO_TEXT_UPDATE(CharSpace);
 		    m_newChar = true;
 		}
 	    }
@@ -98,7 +102,6 @@ bool serial_num::update(unsigned long now, uint8_t m) {
 	m_newChar = false;
 	if ('\0' != m_buffer[m_bufPtr]) {
 	    uint16_t z = morse_table[(size_t) m_buffer[m_bufPtr]];
-	    DISPLAY_MANAGER_SCROLLING_TEXT(m_buffer[m_bufPtr]);
 	    // z = 0x501f
 	    m_charCount = z >> 12;
 	    m_charBit = z & 0x0fff;
@@ -107,6 +110,7 @@ bool serial_num::update(unsigned long now, uint8_t m) {
 	else {
 	    m_inMacro = false;
 	    DISPLAY_MANAGER_NUMBER(m_count);
+	    MORSE_TO_TEXT_UPDATE(CharSpace);
 	}
     }
     return !m_inMacro;
