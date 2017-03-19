@@ -18,6 +18,7 @@ private:
     uint8_t m_buffPtr;
     bool m_spaceSentLast;
     bool m_special;
+    uint16_t m_specialStart;
 };
 
 extern morse_to_text system_mtt;

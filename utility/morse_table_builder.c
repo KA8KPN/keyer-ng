@@ -98,7 +98,8 @@ input_t inputs[] = {
     {'"', 0, "dDddDd"},
     {'$', 0, "dddDddD"},
     {'@', 0, "dDDdDd"},
-    {'\\', 0, "DDDDDD"}  // Something that Anthony Good has defined, so I will use it, too.
+    {'\\', 0, "DDDDDD"}  // Something that Anthony Good has defined as backslash, so I will use it, too.  The thing is, you have to map it to a custom character
+                         // otherwise, it comes out as the Yen symbol.  I will map it to customer character 1
 //  {512, 0, "dddDdD"}, // Prosign SK
 //  {513, 0, "dddddddd"}, // Error
 //  {514, 0, "DdDdD"}, // WTF?  "Starting Signal"  according to Wikipedia
@@ -139,7 +140,7 @@ void build_morse_decode_table() {
 		}
 		current_element = morse_decode_table[current_element].links[branch];
 	    }
-	    morse_decode_table[current_element].c = inputs[i].c;
+	    morse_decode_table[current_element].c = ('\\' == inputs[i].c) ? '\x01' : inputs[i].c;
 	}
     }
     puts("\n\n\n#ifdef FEATURE_MORSE_TO_TEXT");

@@ -160,7 +160,7 @@ morse_decode_t morse_decode_table[] = {
 {36, {0, 0}},
 {0, {65, 0}},
 {64, {0, 0}},
-{92, {0, 0}}
+{1, {0, 0}}
 };
 #else //! DEFINE_MORSE_TABLES
 extern morse_decode_t morse_decode_table[];

@@ -131,6 +131,7 @@ static String prog_mode_string = "Prog";
 
 display *system_display_manager = NULL;
 
+uint8_t backslash[8]  = {0x0,0x10,0x18,0x0c,0x06,0x03,0x01};
 void display_manager_initialize(void) {
     system_display_manager = new display();
     system_display_manager->init();
@@ -163,6 +164,7 @@ void display::write_string_and_fill(uint8_t column, uint8_t row, const String &s
 
 void display::init(void) {
     m_display->begin(COLUMNS, ROWS, LCD_5x8DOTS);
+    m_display->createChar(1, backslash);
     m_display->on();
     m_display->clear();
     m_display->noCursor();

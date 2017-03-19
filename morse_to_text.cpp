@@ -44,6 +44,8 @@ void morse_to_text::update(mtt_symbol s) {
 
     case CharSpace:
 	if (0 != morse_decode_table[m_state].c) {
+	    uint16_t position;
+
 	    // serial_log("In CharSpace decoded '%c'\r\n", morse_decode_table[m_state].c);
 	    DISPLAY_MANAGER_SCROLLING_TEXT(morse_decode_table[m_state].c);
 	    if (CONFIG_MANAGER_GET_COMMAND_MODE()) {
@@ -57,28 +59,29 @@ void morse_to_text::update(mtt_symbol s) {
 		}
 		m_commandBuffer[m_buffPtr] = '\0';
 	    }
-	    if (MEMORY_RECORDING()) {
+	    if (0 != (position = MEMORY_RECORDING())) {
 		// serial_log("Memory is recording\r\n");
 		if (m_special) {
 		    // serial_log("Special found\r\n");
 		    m_special = false;
 		    if (('c' == morse_decode_table[m_state].c) || ('C' == morse_decode_table[m_state].c)) {
 			// serial_log("Record 0x40\r\n");
-			RECORD_SPECIAL_ELEMENT(0x40);
+			RECORD_SPECIAL_ELEMENT(m_specialStart, 0x40);
 		    }
 		    else if (('e' == morse_decode_table[m_state].c) || ('E' == morse_decode_table[m_state].c)) {
 			// serial_log("Record 0x41\r\n");
-			RECORD_SPECIAL_ELEMENT(0x41);
+			RECORD_SPECIAL_ELEMENT(m_specialStart, 0x41);
 		    }
 		    else if (('n' == morse_decode_table[m_state].c) || ('N' == morse_decode_table[m_state].c)) {
 			// serial_log("Record 0x42\r\n");
-			RECORD_SPECIAL_ELEMENT(0x42);
+			RECORD_SPECIAL_ELEMENT(m_specialStart, 0x42);
 		    }
 		}
 		else {
-		    if ('\\' == morse_decode_table[m_state].c) {
+		    if ('\x01' == morse_decode_table[m_state].c) {
 			// serial_log("Found a backslash\r\n");
 			m_special = true;
+			m_specialStart = position;
 		    }
 		}
 	    }
