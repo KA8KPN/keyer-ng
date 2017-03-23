@@ -262,6 +262,7 @@ input_mode_t memories::update(unsigned long now, input_mode_t mode) {
 	    m_mptr = -1;
 	    MORSE_TO_TEXT_UPDATE(CharSpace);
 	    MORSE_TO_TEXT_UPDATE(WordSpace);
+	    SERIAL_NUM_INCREMENT();
 	    break;
 	}
     }

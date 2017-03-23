@@ -15,6 +15,7 @@ class serial_num {
 public:
     serial_num(void);
     bool update(unsigned long now, uint8_t m);
+    void increment(void);
 
 private:
     char m_buffer[10];
@@ -25,14 +26,17 @@ private:
     unsigned long m_nextStateTransitionMs;
     keyer_state_t m_keyerState;
     uint8_t m_charBit, m_charCount;
+    int m_increment;
 };
 
 extern serial_num system_serial_num;
 #define SERIAL_NUM_INITIALIZE()      serial_num_initialize()
 #define SERIAL_NUM_UPDATE(n, m)      system_serial_num.update(n,m)
+#define SERIAL_NUM_INCREMENT()       system_serial_num.increment()
 #else // ! FEATURE_SERIAL_NUMBER
 #define SERIAL_NUM_INITIALIZE()
 #define SERIAL_NUM_UPDATE(n, m)      (true)
+#define SERIAL_NUM_INCREMENT()
 #endif // ! FEATURE_SERIAL_NUMBER
 
 #endif // SERIAL_NUM_H_INCLUDED

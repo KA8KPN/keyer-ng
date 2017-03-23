@@ -18,6 +18,7 @@ void serial_num_initialize(void) {
 serial_num::serial_num(void) {
     m_inMacro = false;
     m_count = 1;
+    m_increment = 0;
 }
 
 bool serial_num::update(unsigned long now, uint8_t m) {
@@ -28,7 +29,6 @@ bool serial_num::update(unsigned long now, uint8_t m) {
 	    // The K3NG keyer just does "T" and "N" for 0 and 9
 	    m_inMacro = true;
 	    sprintf(m_buffer, "%d", m_count);
-	    m_count++;
 	    {
 		char *s;
 		s = m_buffer;
@@ -42,6 +42,7 @@ bool serial_num::update(unsigned long now, uint8_t m) {
 		    ++s;
 		}
 	    }
+	    m_increment = 1;
 	    m_newChar = true;
 	    break;
 
@@ -49,14 +50,13 @@ bool serial_num::update(unsigned long now, uint8_t m) {
 	    // Send serial number as digits
 	    m_inMacro = true;
 	    sprintf(m_buffer, "%d", m_count);
-	    m_count++;
+	    m_increment = 1;
 	    m_newChar = true;
 	    break;
 
 	case 2:
 	    // Decrement count
-	    --m_count;
-	    DISPLAY_MANAGER_NUMBER(m_count);
+	    m_increment = -1;
 	    break;
 	}
 
@@ -109,11 +109,16 @@ bool serial_num::update(unsigned long now, uint8_t m) {
 	}
 	else {
 	    m_inMacro = false;
-	    DISPLAY_MANAGER_NUMBER(m_count);
 	    MORSE_TO_TEXT_UPDATE(CharSpace);
 	}
     }
     return !m_inMacro;
+}
+
+void serial_num::increment(void) {
+    m_count += m_increment;
+    m_increment = 0;
+    DISPLAY_MANAGER_NUMBER(m_count);
 }
 
 #endif // FEATURE_SERIAL_INPUT
