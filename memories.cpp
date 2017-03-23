@@ -24,12 +24,26 @@ void memories::config(uint8_t *memories) {
 
     m_index[0] = 0;
     while (idxptr < MAX_MEMORIES) {
-	if (0 == s_memories[memptr]) {
+	// serial_log("idxptr = %d s_memories[%d] = %d\r\n", idxptr, memptr, s_memories[memptr]);
+	if (0 == s_memories[memptr-1]) {
 	    m_index[idxptr] = memptr;
 	    ++idxptr;
 	}
 	++memptr;
     }
+#if 0
+    serial_log("========================================================================\r\n");
+    serial_log("==========================READING MEMORY CONTENTS=======================\r\n");
+    serial_log("========================================================================\r\n");
+    for (int i=0; i<MAX_MEMORIES; ++i) {
+	serial_log("m_index[%d] = %d\r\n", i, m_index[i]);
+    }
+    for (int i=0; i<MEMORY_SIZE; i+=10) {
+	serial_log("%3d = 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\r\n", i, s_memories[i],
+		   s_memories[i+1], s_memories[i+2], s_memories[i+3], s_memories[i+4], s_memories[i+5],
+		   s_memories[i+6], s_memories[i+7], s_memories[i+8], s_memories[i+9]);
+    }
+#endif // 0
 }
 
 
@@ -76,6 +90,19 @@ void memories::record_memory(uint8_t m) {
 
 	KEYING_RECORD_MODE(false);
 	DISPLAY_MANAGER_CLEAR_NUMBER();
+#if 0
+	serial_log("========================================================================\r\n");
+	serial_log("==========================WRITING MEMORY CONTENTS=======================\r\n");
+	serial_log("========================================================================\r\n");
+	for (int i=0; i<MAX_MEMORIES; ++i) {
+	    serial_log("m_index[%d] = %d\r\n", i, m_index[i]);
+	}
+	for (int i=0; i<MEMORY_SIZE; i+=10) {
+	    serial_log("%3d = 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\r\n", i, s_memories[i],
+		       s_memories[i+1], s_memories[i+2], s_memories[i+3], s_memories[i+4], s_memories[i+5],
+		       s_memories[i+6], s_memories[i+7], s_memories[i+8], s_memories[i+9]);
+	}
+#endif // 0
     }
     else {
 	if (13 > m) {
