@@ -242,6 +242,8 @@ DONE) Change the behavior of the serial number counter such that it only increme
 
 DONE) Don't leave cruft at the end of the memory buffer after recording a memory.
 
+Fix it so that you can't make the serial number less than 1.
+
 Make provision for having a software version number.
 
 Change the name to something better than "new_keyer"
