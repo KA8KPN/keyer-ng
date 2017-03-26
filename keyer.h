@@ -11,6 +11,7 @@ typedef enum keyer_mode {KEYER_IAMBIC_A, KEYER_IAMBIC_B, KEYER_ULTIMATIC, KEYER_
 
 #define MIN_WPM 5L
 #define MAX_WPM 40L
+#define MAX_WPM_OFFSET 25L
 #define DEFAULT_WPM 20
 #define MS_PER_TWITCH 120
 #define TWITCHES_PER_DOT 10

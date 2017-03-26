@@ -242,13 +242,13 @@ DONE) Change the behavior of the serial number counter such that it only increme
 
 DONE) Don't leave cruft at the end of the memory buffer after recording a memory.
 
-Fix it so that you can't make the serial number less than 1.
+DONE) Fix it so that you can't make the serial number less than 1.
 
 Make provision for having a software version number.
 
 Change the name to something better than "new_keyer"
 
-Figure out out to compile the source using the IDE.  Confirm it compiles under Windows.
+DONE)  Figure out out to compile the source using the IDE.  Confirm it compiles under Windows.  The IDE under windows works if I import the libraries.  I must need to import the libraries into the Linux IDE.
 
 Publish the source and make an announcement.
 

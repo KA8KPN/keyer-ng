@@ -31,11 +31,6 @@ void wpm::update(void) {
     if (MIN_WPM > wpm) {
 	wpm = MIN_WPM;
     }
-    else {
-	if (MAX_WPM < wpm) {
-	    wpm = MAX_WPM;
-	}
-    }
     DISPLAY_MANAGER_WPM(wpm, m_wpmSuffix);
     m_twitches = MS_PER_TWITCH/wpm;
     m_dotTwitches = MS_PER_DOT/wpm;
@@ -60,7 +55,7 @@ void wpm::update_suffix(void) {
 
 void wpm::make_slower(int wpm) {
     m_wpmOffset -= wpm;
-    if (-MAX_WPM > m_wpmOffset) {
+    if (-MAX_WPM_OFFSET > m_wpmOffset) {
 	m_wpmOffset = -MAX_WPM;
     }
     update_suffix();
@@ -68,7 +63,7 @@ void wpm::make_slower(int wpm) {
 
 void wpm::make_faster(int wpm) {
     m_wpmOffset += wpm;
-    if (MAX_WPM < m_wpmOffset) {
+    if (MAX_WPM_OFFSET < m_wpmOffset) {
 	m_wpmOffset = MAX_WPM;
     }
     update_suffix();

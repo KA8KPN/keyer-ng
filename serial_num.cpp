@@ -56,7 +56,9 @@ bool serial_num::update(unsigned long now, uint8_t m) {
 
 	case 2:
 	    // Decrement count
-	    m_increment = -1;
+	    if (1 < m_count) {
+		m_increment = -1;
+	    }
 	    break;
 	}
 
