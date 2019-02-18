@@ -12,4 +12,7 @@ I created an Arduino shield based upon his schematic, which can be ordered from 
 
 https://oshpark.com/shared_projects/WsNztKYk
 
+##
+
+This project is not sponsored or supported in any way by my employer Hewlett Packard Enterprise
 
