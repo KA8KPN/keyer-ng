@@ -12,7 +12,11 @@ I created an Arduino shield based upon his schematic, which can be ordered from 
 
 https://oshpark.com/shared_projects/WsNztKYk
 
-##
+## What is it's current state
+
+Currently, the keyer only does Iambic-A because that's what I need.  It saves memories into nonvolatile storage and can record and play back messages.  However, it hasn't been worked on in a long time because I've gone in a different direction.  I'm working on a keyer dongle based on the Arduino Nano which is intended to be connected to and is based on the user interface of a Raspberry Pi.  However, this might be of historical interest.
+
+## NOTE
 
 This project is not sponsored or supported in any way by my employer Hewlett Packard Enterprise
 
